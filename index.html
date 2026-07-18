@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#25693d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Forsthänger">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192.png">
+  <title>Forsthänger Gemeinschaft</title>
+  <style>
+    :root {
+      --green:#1d9b4b;
+      --red:#d43b35;
+      --primary:#25693d;
+      --primary-dark:#194b2b;
+      --bg:#f3f6f3;
+      --card:#fff;
+      --border:#d8e1da;
+      --muted:#667269;
+      --ok-bg:#e8f7ec;
+      --ok:#185c2e;
+      --err-bg:#fdeaea;
+      --err:#8b2020;
+      --shadow:0 5px 18px rgba(0,0,0,.06);
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      color:#202a23;
+      background:var(--bg);
+    }
+
+    header {
+      background:linear-gradient(135deg,#174c2b,#2d7b49);
+      color:white;
+      padding:26px 18px 22px;
+    }
+
+    header .wrap,
+    main {
+      width:min(780px,100%);
+      margin:auto;
+    }
+
+    h1 {
+      margin:0 0 6px;
+      font-size:28px;
+    }
+
+    header p {
+      margin:0;
+      opacity:.92;
+    }
+
+    main { padding:18px; }
+
+    .card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      margin-bottom:16px;
+      box-shadow:var(--shadow);
+    }
+
+    h2 {
+      margin:0 0 14px;
+      font-size:21px;
+    }
+
+    .status-row {
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:16px;
+      background:#eef3ef;
+      border-radius:13px;
+    }
+
+    .dot {
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      background:#999;
+      flex:0 0 38px;
+      box-shadow:0 0 0 7px rgba(0,0,0,.06);
+    }
+
+    .dot.green {
+      background:var(--green);
+      box-shadow:0 0 0 7px rgba(29,155,75,.15);
+    }
+
+    .dot.red {
+      background:var(--red);
+      box-shadow:0 0 0 7px rgba(212,59,53,.15);
+    }
+
+    .status-title {
+      font-size:20px;
+      font-weight:700;
+    }
+
+    .small {
+      margin-top:4px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    label {
+      display:block;
+      font-weight:700;
+      margin:14px 0 6px;
+    }
+
+    input, select, button {
+      width:100%;
+      font:inherit;
+      border-radius:10px;
+    }
+
+    input, select {
+      padding:12px;
+      border:1px solid #b8c5ba;
+      background:white;
+    }
+
+    button {
+      padding:14px;
+      margin-top:16px;
+      border:0;
+      background:var(--primary);
+      color:white;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    button:hover { background:var(--primary-dark); }
+
+    button.secondary {
+      background:#edf3ee;
+      color:#205d37;
+      border:1px solid #bfd0c2;
+    }
+
+    button:disabled {
+      opacity:.55;
+      cursor:wait;
+    }
+
+    .member-fixed {
+      padding:14px;
+      border:1px solid #bfd0c2;
+      border-radius:10px;
+      background:#eef6f0;
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .notice {
+      display:none;
+      margin-top:14px;
+      padding:12px;
+      border-radius:10px;
+    }
+
+    .notice.show { display:block; }
+    .notice.ok { background:var(--ok-bg); color:var(--ok); }
+    .notice.error { background:var(--err-bg); color:var(--err); }
+
+    .reservation {
+      padding:12px 0;
+      border-bottom:1px solid #e4e9e5;
+    }
+
+    .reservation:last-child { border-bottom:0; }
+
+    .reservation strong {
+      display:block;
+      margin-bottom:4px;
+    }
+
+    .reservation-meta {
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .loading {
+      color:var(--muted);
+      font-style:italic;
+    }
+
+    .install-box {
+      background:#f0f7f2;
+      border:2px solid #bfd9c6;
+    }
+
+    .install-head {
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    .app-icon {
+      width:64px;
+      height:64px;
+      border-radius:15px;
+      flex:0 0 64px;
+    }
+
+    .hidden { display:none !important; }
+
+    .footer {
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      padding:2px 0 18px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>🚜 Forsthänger Gemeinschaft</h1>
+    <p>Status, Reservierung und Kalender</p>
+  </div>
+</header>
+
+<main>
+  <section id="installCard" class="card install-box">
+    <div class="install-head">
+      <img src="icon-192.png" alt="Forsthänger-App" class="app-icon">
+      <div>
+        <h2 style="margin-bottom:4px;">Als App installieren</h2>
+        <div id="installText" class="small">
+          Die App kann mit eigenem Symbol auf dem Startbildschirm gespeichert werden.
+        </div>
+      </div>
+    </div>
+    <button id="installButton" type="button" class="hidden">App installieren</button>
+    <button id="hideInstallButton" type="button" class="secondary">Hinweis ausblenden</button>
+  </section>
+
+  <section class="card">
+    <h2>Aktueller Status</h2>
+    <div class="status-row">
+      <span id="statusDot" class="dot"></span>
+      <div>
+        <div id="statusTitle" class="status-title">Status wird geladen …</div>
+        <div id="statusInfo" class="small"></div>
+      </div>
+    </div>
+    <button type="button" class="secondary" id="refreshStatus">Status aktualisieren</button>
+  </section>
+
+  <section class="card">
+    <h2>Reservierung eintragen</h2>
+
+    <label>Mitglied</label>
+    <div id="memberName" class="member-fixed"></div>
+
+    <label for="bookingDate">Datum</label>
+    <input id="bookingDate" type="date">
+
+    <label for="bookingPeriod">Zeitraum</label>
+    <select id="bookingPeriod">
+      <option value="Ganztags">Ganztags</option>
+      <option value="Vormittag">Vormittag</option>
+      <option value="Nachmittag">Nachmittag</option>
+    </select>
+
+    <button id="bookingButton" type="button">Buchung eintragen</button>
+    <div id="bookingNotice" class="notice" role="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>Kommende Reservierungen</h2>
+    <div id="reservations" class="loading">Reservierungen werden geladen …</div>
+    <button type="button" class="secondary" id="refreshReservations">
+      Reservierungen aktualisieren
+    </button>
+  </section>
+
+  <div class="footer">Forsthänger Version 5</div>
+</main>
+
+<script src="config.js"></script>
+<script>
+  const CFG = window.FORSTHAENGER_CONFIG;
+  const MEMBER = (new URLSearchParams(location.search).get("mitglied") || "").trim();
+  let installPrompt = null;
+  let jsonpCounter = 0;
+
+  document.getElementById("memberName").textContent =
+    MEMBER || "Kein Mitglied im persönlichen Link angegeben";
+
+  const today = new Date();
+  document.getElementById("bookingDate").min =
+    new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0,10);
+
+  function apiUrl() {
+    return String(CFG.apiUrl || "").trim();
+  }
+
+  function showNotice(text, type) {
+    const el = document.getElementById("bookingNotice");
+    el.textContent = text;
+    el.className = "notice show " + type;
+  }
+
+  function jsonp(action, params) {
+    return new Promise((resolve, reject) => {
+      const base = apiUrl();
+
+      if (!base || base.includes("HIER_")) {
+        reject(new Error("Google-Web-App-Adresse fehlt in config.js."));
+        return;
+      }
+
+      const callbackName = "forsthaengerCallback_" + (++jsonpCounter) + "_" + Date.now();
+      const script = document.createElement("script");
+      const separator = base.includes("?") ? "&" : "?";
+
+      let finished = false;
+
+      function cleanup() {
+        delete window[callbackName];
+        if (script.parentNode) script.remove();
+      }
+
+      window[callbackName] = function(payload) {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        resolve(payload);
+      };
+
+      script.onerror = function() {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        reject(new Error("Google-Schnittstelle konnte nicht erreicht werden."));
+      };
+
+      const query = new URLSearchParams({
+        action,
+        callback: callbackName,
+        _: Date.now().toString(),
+        ...params
+      });
+
+      script.src = base + separator + query.toString();
+      document.body.appendChild(script);
+
+      setTimeout(() => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        reject(new Error("Keine Antwort von Google erhalten."));
+      }, 15000);
+    });
+  }
+
+  async function loadStatus() {
+    try {
+      const payload = await jsonp("status", {});
+
+      if (!payload || payload.ok === false) {
+        throw new Error(payload?.message || "Status konnte nicht geladen werden.");
+      }
+
+      const status = payload.status;
+      const dot = document.getElementById("statusDot");
+      const title = document.getElementById("statusTitle");
+      const info = document.getElementById("statusInfo");
+
+      if (!status || !status.bekannt) {
+        dot.className = "dot";
+        title.textContent = status?.text || "Status noch nicht empfangen";
+        info.textContent = "";
+        return;
+      }
+
+      dot.className = "dot " + (status.da ? "green" : "red");
+      title.textContent = status.text;
+      info.textContent = status.zeit
+        ? "Letztes ioBroker-Update: " + status.zeit
+        : "";
+    } catch (error) {
+      document.getElementById("statusDot").className = "dot";
+      document.getElementById("statusTitle").textContent = "Status nicht erreichbar";
+      document.getElementById("statusInfo").textContent = error.message;
+    }
+  }
+
+  async function loadReservations() {
+    const container = document.getElementById("reservations");
+    container.className = "loading";
+    container.textContent = "Reservierungen werden geladen …";
+
+    try {
+      const payload = await jsonp("reservations", {
+        days: String(CFG.reservationDays || 60)
+      });
+
+      if (!payload || payload.ok === false) {
+        throw new Error(payload?.message || "Reservierungen konnten nicht geladen werden.");
+      }
+
+      const items = payload.reservations || [];
+      container.className = "";
+      container.innerHTML = "";
+
+      if (!items.length) {
+        container.textContent = "In diesem Zeitraum gibt es keine Reservierungen.";
+        return;
+      }
+
+      items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "reservation";
+
+        const title = document.createElement("strong");
+        title.textContent = item.title || "Unbenannte Reservierung";
+
+        const meta = document.createElement("div");
+        meta.className = "reservation-meta";
+        meta.textContent = item.display || "";
+
+        row.append(title, meta);
+        container.appendChild(row);
+      });
+    } catch (error) {
+      container.className = "notice show error";
+      container.textContent = error.message;
+    }
+  }
+
+  async function submitBooking() {
+    const date = document.getElementById("bookingDate").value;
+    const period = document.getElementById("bookingPeriod").value;
+    const button = document.getElementById("bookingButton");
+
+    if (!MEMBER) {
+      showNotice("Im persönlichen Link fehlt der Mitgliedsname.", "error");
+      return;
+    }
+
+    if (!date) {
+      showNotice("Bitte ein Datum auswählen.", "error");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Buchung wird geprüft …";
+
+    try {
+      const payload = await jsonp("book", {
+        member: MEMBER,
+        date,
+        period
+      });
+
+      if (!payload || payload.ok === false) {
+        throw new Error(payload?.message || "Buchung konnte nicht eingetragen werden.");
+      }
+
+      showNotice(payload.message || "Buchung erfolgreich eingetragen.", "ok");
+      document.getElementById("bookingDate").value = "";
+      await loadReservations();
+    } catch (error) {
+      showNotice(error.message, "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Buchung eintragen";
+    }
+  }
+
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+  }
+
+  function isIos() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+  }
+
+  function setupInstall() {
+    const card = document.getElementById("installCard");
+    const text = document.getElementById("installText");
+    const installButton = document.getElementById("installButton");
+
+    if (isStandalone()) {
+      card.classList.add("hidden");
+      return;
+    }
+
+    if (isIos()) {
+      text.innerHTML =
+        'In Safari unten auf <strong>Teilen</strong> tippen und anschließend ' +
+        '<strong>Zum Home-Bildschirm</strong> wählen.';
+    } else {
+      text.innerHTML =
+        'Im Browser-Menü <strong>App installieren</strong> oder ' +
+        '<strong>Zum Startbildschirm hinzufügen</strong> wählen.';
+    }
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      installPrompt = event;
+      installButton.classList.remove("hidden");
+    });
+
+    installButton.addEventListener("click", async () => {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      await installPrompt.userChoice;
+      installPrompt = null;
+      installButton.classList.add("hidden");
+    });
+
+    document.getElementById("hideInstallButton").addEventListener("click", () => {
+      card.classList.add("hidden");
+    });
+  }
+
+  document.getElementById("bookingButton").addEventListener("click", submitBooking);
+  document.getElementById("refreshStatus").addEventListener("click", loadStatus);
+  document.getElementById("refreshReservations").addEventListener("click", loadReservations);
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+
+  setupInstall();
+  loadStatus();
+  loadReservations();
+  setInterval(loadStatus, 60000);
+</script>
+</body>
+</html>

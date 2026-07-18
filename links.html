@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mitgliederlinks</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:760px;margin:30px auto;padding:16px;background:#f3f6f3}
+.card{background:#fff;border:1px solid #d8e1da;border-radius:16px;padding:18px}
+textarea,input,button{width:100%;box-sizing:border-box;font:inherit;border-radius:10px}
+textarea,input{padding:12px;border:1px solid #b8c5ba;margin:6px 0 12px}
+button{padding:14px;border:0;background:#25693d;color:#fff;font-weight:bold}
+.item{padding:12px 0;border-bottom:1px solid #e4e9e5;word-break:break-all}
+a{color:#185c2e}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Persönliche Mitgliederlinks</h1>
+<label>Grundadresse der Cloudflare-App</label>
+<input id="base" placeholder="https://deine-app.pages.dev/">
+<label>Mitglieder – ein Name pro Zeile</label>
+<textarea id="names" rows="12" placeholder="Brunner Werner&#10;Ebner Hermann"></textarea>
+<button onclick="makeLinks()">Links erstellen</button>
+<div id="result"></div>
+</div>
+<script>
+function makeLinks(){
+  const base=document.getElementById("base").value.trim().replace(/\/?$/,"/");
+  const names=document.getElementById("names").value
+    .split(/\r?\n/)
+    .map(v=>v.trim())
+    .filter(Boolean);
+
+  const out=document.getElementById("result");
+  out.innerHTML="";
+
+  if(!base||!names.length){
+    out.textContent="Bitte Grundadresse und Mitglieder eintragen.";
+    return;
+  }
+
+  names.forEach(name=>{
+    const url=base+"?mitglied="+encodeURIComponent(name);
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML="<strong></strong><br><a target='_blank'></a>";
+    div.querySelector("strong").textContent=name;
+    div.querySelector("a").href=url;
+    div.querySelector("a").textContent=url;
+    out.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
