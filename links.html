@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#25693d">
   <title>Mitgliederlinks – Forsthänger</title>
   <style>
-    :root{--primary:#25693d;--primary-dark:#194b2b;--bg:#f3f6f3;--card:#fff;--border:#d8e1da;--muted:#667269;--ok:#185c2e;--ok-bg:#e8f7ec}
+    :root{--primary:#25693d;--primary-dark:#194b2b;--bg:#f3f6f3;--card:#fff;--border:#d8e1da;--muted:#667269;--ok:#185c2e;--ok-bg:#e8f7ec;--err:#8b2020;--err-bg:#fdeaea}
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#202a23}
     header{background:linear-gradient(135deg,#174c2b,#2d7b49);color:#fff;padding:26px 18px 22px}
@@ -15,16 +15,17 @@
     main{padding:18px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
     label{display:block;font-weight:700;margin:14px 0 6px}
-    input,textarea,button{width:100%;font:inherit;border-radius:10px}
-    input,textarea{padding:12px;border:1px solid #b8c5ba;background:#fff}
-    textarea{min-height:220px;resize:vertical}
+    input,select,button{width:100%;font:inherit;border-radius:10px}
+    input,select{padding:12px;border:1px solid #b8c5ba;background:#fff}
     button{padding:13px;border:0;margin-top:12px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
     button:hover{background:var(--primary-dark)}
     button.secondary{background:#edf3ee;color:#205d37;border:1px solid #bfd0c2}
     .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
     .actions button{margin-top:0}
-    .notice{display:none;margin-top:12px;padding:12px;border-radius:10px;background:var(--ok-bg);color:var(--ok)}
+    .notice{display:none;margin-top:12px;padding:12px;border-radius:10px}
     .notice.show{display:block}
+    .notice.ok{background:var(--ok-bg);color:var(--ok)}
+    .notice.error{background:var(--err-bg);color:var(--err)}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
     .member-card{border:1px solid var(--border);border-radius:14px;padding:16px;background:#fff;break-inside:avoid}
     .member-card h2{margin:0 0 10px;font-size:20px}
@@ -33,7 +34,8 @@
     .url{word-break:break-all;color:#185c2e;font-size:13px;margin:10px 0}
     .member-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .member-actions button{margin:0;padding:11px}
-    .hint{color:var(--muted);font-size:14px;line-height:1.5}
+    .hint,.loading{color:var(--muted);font-size:14px;line-height:1.5}
+    .loading{font-style:italic}
     .print-title{display:none}
     @media print{
       header,.setup,.actions,.notice,.hint,.member-actions{display:none!important}
@@ -48,23 +50,36 @@
 <header>
   <div class="wrap">
     <h1>🚜 Persönliche Mitgliederlinks</h1>
-    <p>QR-Codes, Kopierfunktion, WhatsApp-Text und Druckansicht</p>
+    <p>Mitglieder automatisch aus Google Tabelle laden</p>
   </div>
 </header>
+
 <main>
   <section class="card setup">
     <label for="base">Grundadresse der GitHub-App</label>
     <input id="base" value="https://prima6a.github.io/forsthaenger/">
-    <label for="names">Mitglieder – ein Name pro Zeile</label>
-    <textarea id="names" placeholder="Brunner Werner&#10;Ebner Hermann&#10;Huber Franz"></textarea>
+
+    <label for="memberFilter">Mitglied suchen</label>
+    <input id="memberFilter" placeholder="Nachname oder Vorname eingeben">
+
+    <label for="memberSelect">Mitglied auswählen</label>
+    <select id="memberSelect">
+      <option value="">Alle Mitglieder anzeigen</option>
+    </select>
+
     <div class="actions">
-      <button type="button" onclick="makeLinks()">Links erstellen</button>
+      <button type="button" onclick="loadMembers()">Mitglieder neu laden</button>
+      <button type="button" class="secondary" onclick="showSelected()">Auswahl anzeigen</button>
       <button type="button" class="secondary" onclick="copyAllLinks()">Alle Links kopieren</button>
       <button type="button" class="secondary" onclick="copyWhatsAppText()">WhatsApp-Text kopieren</button>
       <button type="button" class="secondary" onclick="window.print()">Drucken / PDF</button>
     </div>
+
     <div id="notice" class="notice"></div>
-    <p class="hint">Die Namen immer als <strong>Nachname Vorname</strong> eintragen.</p>
+    <p id="status" class="loading">Mitglieder werden geladen …</p>
+    <p class="hint">
+      Quelle: <strong>Forsthänger_Abschluss → Mitglieder → Spalte A</strong>.
+    </p>
   </section>
 
   <section class="card">
@@ -73,43 +88,137 @@
   </section>
 </main>
 
+<script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  let currentLinks = [];
+  const CFG=window.FORSTHAENGER_CONFIG;
+  let allMembers=[];
+  let currentLinks=[];
+  let jsonpCounter=0;
 
+  function apiUrl(){return String(CFG.apiUrl||"").trim();}
   function normalizedBase(){
     const value=document.getElementById("base").value.trim();
-    return value ? (value.endsWith("/") ? value : value + "/") : "";
+    return value ? (value.endsWith("/") ? value : value+"/") : "";
   }
 
-  function memberNames(){
-    return document.getElementById("names").value
-      .split(/\r?\n/)
-      .map(name=>name.trim())
-      .filter(Boolean)
-      .filter((name,index,all)=>all.indexOf(name)===index);
-  }
-
-  function showNotice(text){
+  function showNotice(text,type){
     const notice=document.getElementById("notice");
     notice.textContent=text;
-    notice.className="notice show";
-    setTimeout(()=>notice.className="notice",3000);
+    notice.className="notice show "+type;
+    setTimeout(()=>notice.className="notice",3500);
   }
 
-  function makeLinks(){
+  function jsonp(action,params={}){
+    return new Promise((resolve,reject)=>{
+      const base=apiUrl();
+      if(!base||base.includes("HIER_")){
+        reject(new Error("Google-Web-App-Adresse fehlt in config.js."));
+        return;
+      }
+
+      const callbackName="membersCallback_"+(++jsonpCounter)+"_"+Date.now();
+      const script=document.createElement("script");
+      const separator=base.includes("?")?"&":"?";
+      let done=false;
+
+      function cleanup(){
+        delete window[callbackName];
+        if(script.parentNode) script.remove();
+      }
+
+      window[callbackName]=payload=>{
+        if(done)return;
+        done=true;
+        cleanup();
+        resolve(payload);
+      };
+
+      script.onerror=()=>{
+        if(done)return;
+        done=true;
+        cleanup();
+        reject(new Error("Google-Schnittstelle konnte nicht erreicht werden."));
+      };
+
+      const query=new URLSearchParams({
+        action,
+        callback:callbackName,
+        _:Date.now().toString(),
+        ...params
+      });
+
+      script.src=base+separator+query.toString();
+      document.body.appendChild(script);
+
+      setTimeout(()=>{
+        if(done)return;
+        done=true;
+        cleanup();
+        reject(new Error("Keine Antwort von Google erhalten."));
+      },15000);
+    });
+  }
+
+  async function loadMembers(){
+    const status=document.getElementById("status");
+    status.textContent="Mitglieder werden aus der Tabelle geladen …";
+
+    try{
+      const payload=await jsonp("members");
+      if(!payload||payload.ok===false){
+        throw new Error(payload?.message||"Mitglieder konnten nicht geladen werden.");
+      }
+
+      allMembers=payload.members||[];
+      populateSelect(allMembers);
+      renderMembers(allMembers);
+      status.textContent=allMembers.length+" Mitglieder geladen.";
+      showNotice(allMembers.length+" Mitglieder wurden geladen.","ok");
+    }catch(error){
+      status.textContent="";
+      showNotice(error.message,"error");
+    }
+  }
+
+  function populateSelect(members){
+    const select=document.getElementById("memberSelect");
+    select.innerHTML='<option value="">Alle Mitglieder anzeigen</option>';
+    members.forEach(name=>{
+      const option=document.createElement("option");
+      option.value=name;
+      option.textContent=name;
+      select.appendChild(option);
+    });
+  }
+
+  function filteredMembers(){
+    const query=document.getElementById("memberFilter").value.trim().toLowerCase();
+    const selected=document.getElementById("memberSelect").value;
+    if(selected)return[selected];
+    if(!query)return allMembers;
+    return allMembers.filter(name=>name.toLowerCase().includes(query));
+  }
+
+  function showSelected(){renderMembers(filteredMembers());}
+
+  function renderMembers(members){
     const base=normalizedBase();
-    const names=memberNames();
     const result=document.getElementById("result");
     result.innerHTML="";
     currentLinks=[];
 
-    if(!base||!names.length){
-      showNotice("Bitte Grundadresse und mindestens ein Mitglied eintragen.");
+    if(!base){
+      showNotice("Bitte Grundadresse eintragen.","error");
       return;
     }
 
-    names.forEach((name,index)=>{
+    if(!members.length){
+      result.textContent="Keine passenden Mitglieder gefunden.";
+      return;
+    }
+
+    members.forEach((name,index)=>{
       const url=base+"?mitglied="+encodeURIComponent(name);
       currentLinks.push({name,url});
 
@@ -147,11 +256,9 @@
 
       new QRCode(qr,{text:url,width:190,height:190,correctLevel:QRCode.CorrectLevel.M});
     });
-
-    showNotice(names.length+" persönliche Links wurden erstellt.");
   }
 
-  async function copyText(text,successMessage){
+  async function copyText(text,message){
     try{
       await navigator.clipboard.writeText(text);
     }catch(error){
@@ -162,28 +269,38 @@
       document.execCommand("copy");
       area.remove();
     }
-    showNotice(successMessage);
+    showNotice(message,"ok");
   }
 
   function copyAllLinks(){
-    if(!currentLinks.length) makeLinks();
-    if(!currentLinks.length) return;
-    const text=currentLinks.map(item=>item.name+"\n"+item.url).join("\n\n");
-    copyText(text,"Alle Mitgliederlinks wurden kopiert.");
+    if(!currentLinks.length)renderMembers(filteredMembers());
+    if(!currentLinks.length)return;
+    const text=currentLinks.map(item=>item.name+"\\n"+item.url).join("\\n\\n");
+    copyText(text,"Alle angezeigten Links wurden kopiert.");
   }
 
   function copyWhatsAppText(){
-    if(!currentLinks.length) makeLinks();
-    if(!currentLinks.length) return;
+    if(!currentLinks.length)renderMembers(filteredMembers());
+    if(!currentLinks.length)return;
+
     const text=currentLinks.map(item=>
-      "Hallo "+item.name+",\n\n"+
-      "hier ist dein persönlicher Link zur Forsthänger-App:\n"+
-      item.url+"\n\n"+
+      "Hallo "+item.name+",\\n\\n"+
+      "hier ist dein persönlicher Link zur Forsthänger-App:\\n"+
+      item.url+"\\n\\n"+
       "Du kannst die App über den Browser auf deinem Startbildschirm speichern."
-    ).join("\n\n--------------------\n\n");
+    ).join("\\n\\n--------------------\\n\\n");
+
     copyText(text,"Der WhatsApp-Text wurde kopiert.");
   }
+
+  document.getElementById("memberFilter").addEventListener("input",()=>{
+    document.getElementById("memberSelect").value="";
+    renderMembers(filteredMembers());
+  });
+
+  document.getElementById("memberSelect").addEventListener("change",showSelected);
+
+  loadMembers();
 </script>
 </body>
 </html>
-
