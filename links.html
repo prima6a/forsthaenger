@@ -1,56 +1,189 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mitgliederlinks</title>
-<style>
-body{font-family:Arial,sans-serif;max-width:760px;margin:30px auto;padding:16px;background:#f3f6f3}
-.card{background:#fff;border:1px solid #d8e1da;border-radius:16px;padding:18px}
-textarea,input,button{width:100%;box-sizing:border-box;font:inherit;border-radius:10px}
-textarea,input{padding:12px;border:1px solid #b8c5ba;margin:6px 0 12px}
-button{padding:14px;border:0;background:#25693d;color:#fff;font-weight:bold}
-.item{padding:12px 0;border-bottom:1px solid #e4e9e5;word-break:break-all}
-a{color:#185c2e}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#25693d">
+  <title>Mitgliederlinks – Forsthänger</title>
+  <style>
+    :root{--primary:#25693d;--primary-dark:#194b2b;--bg:#f3f6f3;--card:#fff;--border:#d8e1da;--muted:#667269;--ok:#185c2e;--ok-bg:#e8f7ec}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#202a23}
+    header{background:linear-gradient(135deg,#174c2b,#2d7b49);color:#fff;padding:26px 18px 22px}
+    header .wrap,main{width:min(980px,100%);margin:auto}
+    h1{margin:0 0 6px;font-size:28px} header p{margin:0;opacity:.92}
+    main{padding:18px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
+    label{display:block;font-weight:700;margin:14px 0 6px}
+    input,textarea,button{width:100%;font:inherit;border-radius:10px}
+    input,textarea{padding:12px;border:1px solid #b8c5ba;background:#fff}
+    textarea{min-height:220px;resize:vertical}
+    button{padding:13px;border:0;margin-top:12px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
+    button:hover{background:var(--primary-dark)}
+    button.secondary{background:#edf3ee;color:#205d37;border:1px solid #bfd0c2}
+    .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
+    .actions button{margin-top:0}
+    .notice{display:none;margin-top:12px;padding:12px;border-radius:10px;background:var(--ok-bg);color:var(--ok)}
+    .notice.show{display:block}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+    .member-card{border:1px solid var(--border);border-radius:14px;padding:16px;background:#fff;break-inside:avoid}
+    .member-card h2{margin:0 0 10px;font-size:20px}
+    .qr{width:190px;height:190px;margin:12px auto;display:flex;align-items:center;justify-content:center}
+    .qr img,.qr canvas{max-width:100%;height:auto}
+    .url{word-break:break-all;color:#185c2e;font-size:13px;margin:10px 0}
+    .member-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .member-actions button{margin:0;padding:11px}
+    .hint{color:var(--muted);font-size:14px;line-height:1.5}
+    .print-title{display:none}
+    @media print{
+      header,.setup,.actions,.notice,.hint,.member-actions{display:none!important}
+      body{background:#fff} main{width:100%;padding:0}.card{box-shadow:none;border:0;padding:0}
+      .print-title{display:block;text-align:center;margin:0 0 18px}
+      .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+      .member-card{border:1px solid #aaa;page-break-inside:avoid}
+    }
+  </style>
 </head>
 <body>
-<div class="card">
-<h1>Persönliche Mitgliederlinks</h1>
-<label>Grundadresse der Cloudflare-App</label>
-<input id="base" placeholder="https://deine-app.pages.dev/">
-<label>Mitglieder – ein Name pro Zeile</label>
-<textarea id="names" rows="12" placeholder="Brunner Werner&#10;Ebner Hermann"></textarea>
-<button onclick="makeLinks()">Links erstellen</button>
-<div id="result"></div>
-</div>
+<header>
+  <div class="wrap">
+    <h1>🚜 Persönliche Mitgliederlinks</h1>
+    <p>QR-Codes, Kopierfunktion, WhatsApp-Text und Druckansicht</p>
+  </div>
+</header>
+<main>
+  <section class="card setup">
+    <label for="base">Grundadresse der GitHub-App</label>
+    <input id="base" value="https://prima6a.github.io/forsthaenger/">
+    <label for="names">Mitglieder – ein Name pro Zeile</label>
+    <textarea id="names" placeholder="Brunner Werner&#10;Ebner Hermann&#10;Huber Franz"></textarea>
+    <div class="actions">
+      <button type="button" onclick="makeLinks()">Links erstellen</button>
+      <button type="button" class="secondary" onclick="copyAllLinks()">Alle Links kopieren</button>
+      <button type="button" class="secondary" onclick="copyWhatsAppText()">WhatsApp-Text kopieren</button>
+      <button type="button" class="secondary" onclick="window.print()">Drucken / PDF</button>
+    </div>
+    <div id="notice" class="notice"></div>
+    <p class="hint">Die Namen immer als <strong>Nachname Vorname</strong> eintragen.</p>
+  </section>
+
+  <section class="card">
+    <h1 class="print-title">Forsthänger – persönliche Mitgliederlinks</h1>
+    <div id="result" class="grid"></div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-function makeLinks(){
-  const base=document.getElementById("base").value.trim().replace(/\/?$/,"/");
-  const names=document.getElementById("names").value
-    .split(/\r?\n/)
-    .map(v=>v.trim())
-    .filter(Boolean);
+  let currentLinks = [];
 
-  const out=document.getElementById("result");
-  out.innerHTML="";
-
-  if(!base||!names.length){
-    out.textContent="Bitte Grundadresse und Mitglieder eintragen.";
-    return;
+  function normalizedBase(){
+    const value=document.getElementById("base").value.trim();
+    return value ? (value.endsWith("/") ? value : value + "/") : "";
   }
 
-  names.forEach(name=>{
-    const url=base+"?mitglied="+encodeURIComponent(name);
-    const div=document.createElement("div");
-    div.className="item";
-    div.innerHTML="<strong></strong><br><a target='_blank'></a>";
-    div.querySelector("strong").textContent=name;
-    div.querySelector("a").href=url;
-    div.querySelector("a").textContent=url;
-    out.appendChild(div);
-  });
-}
+  function memberNames(){
+    return document.getElementById("names").value
+      .split(/\r?\n/)
+      .map(name=>name.trim())
+      .filter(Boolean)
+      .filter((name,index,all)=>all.indexOf(name)===index);
+  }
+
+  function showNotice(text){
+    const notice=document.getElementById("notice");
+    notice.textContent=text;
+    notice.className="notice show";
+    setTimeout(()=>notice.className="notice",3000);
+  }
+
+  function makeLinks(){
+    const base=normalizedBase();
+    const names=memberNames();
+    const result=document.getElementById("result");
+    result.innerHTML="";
+    currentLinks=[];
+
+    if(!base||!names.length){
+      showNotice("Bitte Grundadresse und mindestens ein Mitglied eintragen.");
+      return;
+    }
+
+    names.forEach((name,index)=>{
+      const url=base+"?mitglied="+encodeURIComponent(name);
+      currentLinks.push({name,url});
+
+      const card=document.createElement("article");
+      card.className="member-card";
+
+      const heading=document.createElement("h2");
+      heading.textContent=name;
+
+      const qr=document.createElement("div");
+      qr.className="qr";
+      qr.id="qr-"+index;
+
+      const urlText=document.createElement("div");
+      urlText.className="url";
+      urlText.textContent=url;
+
+      const actions=document.createElement("div");
+      actions.className="member-actions";
+
+      const openButton=document.createElement("button");
+      openButton.type="button";
+      openButton.textContent="App öffnen";
+      openButton.onclick=()=>window.open(url,"_blank");
+
+      const copyButton=document.createElement("button");
+      copyButton.type="button";
+      copyButton.className="secondary";
+      copyButton.textContent="Link kopieren";
+      copyButton.onclick=()=>copyText(url,"Link für "+name+" kopiert.");
+
+      actions.append(openButton,copyButton);
+      card.append(heading,qr,urlText,actions);
+      result.appendChild(card);
+
+      new QRCode(qr,{text:url,width:190,height:190,correctLevel:QRCode.CorrectLevel.M});
+    });
+
+    showNotice(names.length+" persönliche Links wurden erstellt.");
+  }
+
+  async function copyText(text,successMessage){
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(error){
+      const area=document.createElement("textarea");
+      area.value=text;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+    showNotice(successMessage);
+  }
+
+  function copyAllLinks(){
+    if(!currentLinks.length) makeLinks();
+    if(!currentLinks.length) return;
+    const text=currentLinks.map(item=>item.name+"\n"+item.url).join("\n\n");
+    copyText(text,"Alle Mitgliederlinks wurden kopiert.");
+  }
+
+  function copyWhatsAppText(){
+    if(!currentLinks.length) makeLinks();
+    if(!currentLinks.length) return;
+    const text=currentLinks.map(item=>
+      "Hallo "+item.name+",\n\n"+
+      "hier ist dein persönlicher Link zur Forsthänger-App:\n"+
+      item.url+"\n\n"+
+      "Du kannst die App über den Browser auf deinem Startbildschirm speichern."
+    ).join("\n\n--------------------\n\n");
+    copyText(text,"Der WhatsApp-Text wurde kopiert.");
+  }
 </script>
 </body>
 </html>
+
