@@ -216,6 +216,15 @@
     }
 
     .hidden { display:none !important; }
+    .member-dialog{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55)}
+    .member-dialog.hidden{display:none}
+    .member-dialog-card{width:min(520px,100%);background:#fff;border-radius:18px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+    .member-dialog-card h2{margin:0 0 8px}
+    .member-dialog-card p{color:var(--muted);line-height:1.5}
+    .member-change{margin-top:10px;text-align:center;font-size:14px}
+    .member-change button{width:auto;margin:0;padding:0;border:0;background:none;color:var(--primary);text-decoration:underline}
+    .member-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .member-dialog-actions button{margin-top:0}
 
     .footer {
       text-align:center;
@@ -265,6 +274,9 @@
 
     <label>Mitglied</label>
     <div id="memberName" class="member-fixed"></div>
+    <div class="member-change">
+      <button type="button" id="changeMemberButton">Mitglied ändern</button>
+    </div>
 
     <label for="bookingDate">Datum</label>
     <input id="bookingDate" type="date">
@@ -294,12 +306,26 @@
 <script src="config.js"></script>
 <script>
   const CFG = window.FORSTHAENGER_CONFIG;
-  const MEMBER = (new URLSearchParams(location.search).get("mitglied") || "").trim();
+  const MEMBER_STORAGE_KEY = "forsthaenger-mitglied";
+  const URL_MEMBER = (new URLSearchParams(location.search).get("mitglied") || "").trim();
+  let MEMBER = URL_MEMBER || loadStoredMember();
   let installPrompt = null;
   let jsonpCounter = 0;
+  let allMembers = [];
 
-  document.getElementById("memberName").textContent =
-    MEMBER || "Kein Mitglied im persönlichen Link angegeben";
+  function loadStoredMember(){
+    try{return localStorage.getItem(MEMBER_STORAGE_KEY)||"";}catch(error){return "";}
+  }
+
+  function saveStoredMember(name){
+    try{localStorage.setItem(MEMBER_STORAGE_KEY,name);}catch(error){}
+  }
+
+  function updateMemberDisplay(){
+    document.getElementById("memberName").textContent = MEMBER || "Noch kein Mitglied ausgewählt";
+  }
+
+  updateMemberDisplay();
 
   const today = new Date();
   document.getElementById("bookingDate").min =
@@ -445,6 +471,63 @@
     }
   }
 
+  async function loadMembersForDialog(){
+    const select=document.getElementById("memberDialogSelect");
+    const notice=document.getElementById("memberDialogNotice");
+    select.innerHTML='<option value="">Mitglied auswählen …</option>';
+    notice.className="notice";
+    notice.textContent="";
+
+    try{
+      const payload=await jsonp("members",{});
+      if(!payload||payload.ok===false){
+        throw new Error(payload&&payload.message?payload.message:"Mitglieder konnten nicht geladen werden.");
+      }
+      allMembers=payload.members||[];
+      fillMemberSelect(allMembers);
+      if(MEMBER)select.value=MEMBER;
+    }catch(error){
+      notice.textContent=error.message;
+      notice.className="notice show error";
+    }
+  }
+
+  function fillMemberSelect(members){
+    const select=document.getElementById("memberDialogSelect");
+    select.innerHTML='<option value="">Mitglied auswählen …</option>';
+    members.forEach(name=>{
+      const option=document.createElement("option");
+      option.value=name;
+      option.textContent=name;
+      select.appendChild(option);
+    });
+  }
+
+  function openMemberDialog(){
+    document.getElementById("memberDialog").classList.remove("hidden");
+    document.getElementById("memberSearch").value="";
+    loadMembersForDialog();
+  }
+
+  function closeMemberDialog(){
+    document.getElementById("memberDialog").classList.add("hidden");
+  }
+
+  function saveSelectedMember(){
+    const selected=document.getElementById("memberDialogSelect").value.trim();
+    const notice=document.getElementById("memberDialogNotice");
+    if(!selected){
+      notice.textContent="Bitte ein Mitglied auswählen.";
+      notice.className="notice show error";
+      return;
+    }
+    MEMBER=selected;
+    saveStoredMember(MEMBER);
+    updateMemberDisplay();
+    closeMemberDialog();
+    showNotice("Mitglied gespeichert: "+MEMBER,"ok");
+  }
+
   async function submitBooking() {
     const date = document.getElementById("bookingDate").value;
     const period = document.getElementById("bookingPeriod").value;
@@ -536,6 +619,23 @@
   document.getElementById("bookingButton").addEventListener("click", submitBooking);
   document.getElementById("refreshStatus").addEventListener("click", loadStatus);
   document.getElementById("refreshReservations").addEventListener("click", loadReservations);
+  document.getElementById("changeMemberButton").addEventListener("click",openMemberDialog);
+  document.getElementById("saveMemberButton").addEventListener("click",saveSelectedMember);
+  document.getElementById("cancelMemberButton").addEventListener("click",()=>{if(MEMBER)closeMemberDialog();});
+  document.getElementById("memberSearch").addEventListener("input",function(){
+    const query=this.value.trim().toLowerCase();
+    fillMemberSelect(!query?allMembers:allMembers.filter(name=>name.toLowerCase().includes(query)));
+  });
+
+  if(URL_MEMBER){
+    MEMBER=URL_MEMBER;
+    saveStoredMember(MEMBER);
+    updateMemberDisplay();
+  }
+
+  if(!MEMBER){
+    openMemberDialog();
+  }
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
@@ -546,5 +646,22 @@
   loadReservations();
   setInterval(loadStatus, 60000);
 </script>
+<div id="memberDialog" class="member-dialog hidden" role="dialog" aria-modal="true">
+  <div class="member-dialog-card">
+    <h2>Mitglied auswählen</h2>
+    <p>Bitte einmal deinen Namen auswählen. Die App speichert ihn auf diesem Gerät.</p>
+    <label for="memberSearch">Mitglied suchen</label>
+    <input id="memberSearch" type="search" placeholder="Nachname oder Vorname">
+    <label for="memberDialogSelect">Mitglied</label>
+    <select id="memberDialogSelect">
+      <option value="">Mitglied auswählen …</option>
+    </select>
+    <div class="member-dialog-actions">
+      <button type="button" id="saveMemberButton">Speichern</button>
+      <button type="button" class="secondary" id="cancelMemberButton">Abbrechen</button>
+    </div>
+    <div id="memberDialogNotice" class="notice" role="status"></div>
+  </div>
+</div>
 </body>
 </html>
