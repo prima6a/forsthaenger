@@ -1,25 +1,15 @@
-const CACHE = "forsthaenger-v5-3";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./config.js",
-  "./manifest.webmanifest",
-  "./icon-192.png",
-  "./icon-512.png"
-];
+const CACHE = "forsthaenger-v5-4";
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))
-    )
+      Promise.all(keys.map(key => caches.delete(key)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
@@ -27,18 +17,15 @@ self.addEventListener("fetch", event => {
 
   const url = new URL(event.request.url);
 
-  // Google-API-Anfragen niemals aus dem Cache bedienen.
-  if (url.hostname.includes("script.google.com") || url.hostname.includes("googleusercontent.com")) {
+  if (
+    url.hostname.includes("script.google.com") ||
+    url.hostname.includes("googleusercontent.com")
+  ) {
     return;
   }
 
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-        return response;
-      })
+    fetch(event.request, { cache: "no-store" })
       .catch(() => caches.match(event.request))
   );
 });
