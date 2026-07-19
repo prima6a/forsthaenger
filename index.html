@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0f6a2c">
+  <meta name="theme-color" content="#25693d">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Forsthänger">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -14,206 +13,216 @@
 
   <style>
     :root{
-      --green:#087629;
-      --green-2:#11933a;
-      --green-soft:#e9f7ed;
-      --green-border:#bfe3c9;
-      --red:#cf3b35;
-      --red-soft:#fdeceb;
-      --bg:#f5f7f5;
-      --card:#ffffff;
-      --text:#1d271f;
+      --green:#1d9b4b;
+      --red:#d33b35;
+      --primary:#25693d;
+      --primary-dark:#194b2b;
+      --bg:#f3f6f3;
+      --card:#fff;
+      --border:#d8e1da;
       --muted:#667269;
-      --border:#dde5df;
-      --shadow:0 8px 24px rgba(17,55,27,.08);
-      --shadow-soft:0 4px 14px rgba(17,55,27,.06);
-      --radius:18px;
+      --ok-bg:#e8f7ec;
+      --ok:#185c2e;
+      --err-bg:#fdeaea;
+      --err:#8b2020;
     }
 
     *{box-sizing:border-box}
 
-    html,body{margin:0;padding:0}
-
     body{
+      margin:0;
       font-family:Arial,Helvetica,sans-serif;
-      color:var(--text);
       background:var(--bg);
-      min-height:100vh;
+      color:#202a23;
     }
 
-    button,input,select{
-      font:inherit;
-    }
-
-    .app-shell{
-      width:min(820px,100%);
-      margin:0 auto;
-      min-height:100vh;
-      background:var(--bg);
-    }
-
-    .topbar{
-      background:linear-gradient(135deg,#075e23,#0f7f30 58%,#086725);
+    header{
+      background:linear-gradient(135deg,#174c2b,#2d7b49);
       color:#fff;
-      padding:18px 18px 22px;
-      position:sticky;
-      top:0;
-      z-index:20;
-      box-shadow:0 4px 16px rgba(0,0,0,.15);
+      padding:22px 18px;
     }
 
-    .topbar-inner{
+    .header-inner,
+    main{
+      width:min(760px,100%);
+      margin:auto;
+    }
+
+    .header-inner{
       display:flex;
       align-items:center;
-      gap:14px;
-      max-width:780px;
-      margin:0 auto;
+      gap:15px;
     }
 
-    .brand-icon{
-      width:74px;
-      height:74px;
-      border-radius:18px;
-      object-fit:cover;
-      box-shadow:0 5px 16px rgba(0,0,0,.3);
-      border:2px solid rgba(255,255,255,.28);
-      flex:0 0 74px;
+    .header-logo{
+      width:68px;
+      height:68px;
+      border-radius:17px;
+      box-shadow:0 4px 14px rgba(0,0,0,.28);
+      flex:0 0 68px;
     }
 
-    .brand-copy{
-      min-width:0;
-      flex:1;
-    }
-
-    .brand-copy h1{
+    h1{
       margin:0;
-      font-size:31px;
-      line-height:1.05;
-      letter-spacing:-.4px;
+      font-size:29px;
     }
 
-    .brand-copy p{
-      margin:6px 0 0;
-      font-size:17px;
-      opacity:.93;
-    }
-
-    .menu-button{
-      width:46px;
-      height:46px;
-      border:0;
-      border-radius:13px;
-      background:rgba(255,255,255,.14);
-      color:#fff;
-      font-size:27px;
-      cursor:pointer;
-      flex:0 0 46px;
+    header p{
+      margin:5px 0 0;
+      opacity:.92;
+      font-size:16px;
     }
 
     main{
-      padding:18px 16px 110px;
+      padding:18px;
     }
 
     .card{
       background:var(--card);
       border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow-soft);
+      border-radius:16px;
       padding:18px;
       margin-bottom:16px;
+      box-shadow:0 4px 16px rgba(0,0,0,.05);
     }
 
-    .section-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .section-head h2{
-      margin:0;
+    h2{
+      margin:0 0 14px;
       font-size:21px;
-      color:#0e6d29;
     }
 
-    .text-button{
-      width:auto;
-      border:0;
-      background:transparent;
-      color:#0e762e;
-      font-weight:700;
-      padding:8px 0;
-      cursor:pointer;
-    }
-
-    .status-box{
+    .status-row{
       display:flex;
       align-items:center;
       gap:14px;
       padding:16px;
-      border-radius:15px;
-      background:linear-gradient(135deg,#eff9f1,#e2f5e7);
-      border:1px solid #c9e8d1;
+      border-radius:13px;
+      background:#eef3ef;
     }
 
-    .status-icon{
-      width:42px;
-      height:42px;
+    .dot{
+      width:36px;
+      height:36px;
       border-radius:50%;
-      display:grid;
-      place-items:center;
-      color:#fff;
       background:#999;
-      font-size:24px;
-      font-weight:700;
-      box-shadow:0 0 0 7px rgba(0,0,0,.05);
-      flex:0 0 42px;
+      flex:0 0 36px;
+      box-shadow:0 0 0 7px rgba(0,0,0,.06);
     }
 
-    .status-icon.green{
-      background:var(--green-2);
-      box-shadow:0 0 0 7px rgba(17,147,58,.13);
+    .dot.green{
+      background:var(--green);
+      box-shadow:0 0 0 7px rgba(29,155,75,.15);
     }
 
-    .status-icon.red{
+    .dot.red{
       background:var(--red);
-      box-shadow:0 0 0 7px rgba(207,59,53,.13);
+      box-shadow:0 0 0 7px rgba(211,59,53,.15);
     }
 
     .status-title{
-      font-size:21px;
-      font-weight:800;
-      margin-bottom:4px;
+      font-size:20px;
+      font-weight:700;
     }
 
-    .status-meta{
+    .small{
+      margin-top:4px;
       color:var(--muted);
       font-size:14px;
     }
 
-    .reservation-list{
-      border:1px solid var(--border);
-      border-radius:14px;
-      overflow:hidden;
+    label{
+      display:block;
+      font-weight:700;
+      margin:14px 0 6px;
+    }
+
+    input,
+    select,
+    button{
+      width:100%;
+      font:inherit;
+      border-radius:10px;
+    }
+
+    input,
+    select{
+      padding:12px;
+      border:1px solid #b8c5ba;
       background:#fff;
     }
 
-    .reservation{
-      padding:14px 15px;
-      border-bottom:1px solid #e7ece8;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+    button{
+      padding:14px;
+      border:0;
+      margin-top:16px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
     }
 
-    .reservation:last-child{border-bottom:0}
+    button:hover{
+      background:var(--primary-dark);
+    }
+
+    button.secondary{
+      background:#edf3ee;
+      color:#205d37;
+      border:1px solid #bfd0c2;
+    }
+
+    button:disabled{
+      opacity:.55;
+      cursor:wait;
+    }
+
+    .member-fixed{
+      padding:14px;
+      border:1px solid #bfd0c2;
+      border-radius:10px;
+      background:#eef6f0;
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .member-change{
+      text-align:center;
+      margin-top:10px;
+    }
+
+    .member-change button{
+      width:auto;
+      padding:0;
+      margin:0;
+      border:0;
+      background:none;
+      color:var(--primary);
+      text-decoration:underline;
+    }
+
+    .notice{
+      display:none;
+      margin-top:14px;
+      padding:12px;
+      border-radius:10px;
+    }
+
+    .notice.show{display:block}
+    .notice.ok{background:var(--ok-bg);color:var(--ok)}
+    .notice.error{background:var(--err-bg);color:var(--err)}
+
+    .reservation{
+      padding:12px 0;
+      border-bottom:1px solid #e4e9e5;
+    }
+
+    .reservation:last-child{
+      border-bottom:0;
+    }
 
     .reservation strong{
       display:block;
       margin-bottom:4px;
-      font-size:16px;
     }
 
     .reservation-meta{
@@ -221,236 +230,20 @@
       font-size:14px;
     }
 
-    .badge{
-      flex:0 0 auto;
-      color:#0d6e28;
-      background:#dff3e4;
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:13px;
-      font-weight:700;
-    }
-
     .loading{
       color:var(--muted);
       font-style:italic;
-      padding:8px 0;
-    }
-
-    .quick-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .quick-button{
-      min-height:94px;
-      border:0;
-      border-radius:15px;
-      padding:16px;
-      background:linear-gradient(135deg,#0b742c,#11873a);
-      color:#fff;
-      text-align:left;
-      font-weight:700;
-      cursor:pointer;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .quick-button span{
-      display:block;
-      font-size:27px;
-      margin-bottom:9px;
-    }
-
-    .member-card{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .member-info{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-
-    .member-symbol{
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:#eaf5ed;
-      color:#0d7029;
-      font-size:23px;
-      flex:0 0 42px;
-    }
-
-    .member-name{
-      font-size:17px;
-      font-weight:700;
-      word-break:break-word;
-    }
-
-    .member-change{
-      width:auto;
-      border:0;
-      background:transparent;
-      color:#0d7029;
-      font-weight:700;
-      cursor:pointer;
-      padding:8px;
-    }
-
-    .booking-form label{
-      display:block;
-      margin:14px 0 7px;
-      font-weight:700;
-    }
-
-    .booking-form input,
-    .booking-form select{
-      width:100%;
-      padding:13px;
-      border:1px solid #b9c7bc;
-      border-radius:11px;
-      background:#fff;
-    }
-
-    .primary-button{
-      width:100%;
-      margin-top:17px;
-      padding:14px;
-      border:0;
-      border-radius:12px;
-      background:linear-gradient(135deg,#0b742c,#11873a);
-      color:#fff;
-      font-weight:800;
-      cursor:pointer;
-    }
-
-    .primary-button:disabled{
-      opacity:.55;
-      cursor:wait;
-    }
-
-    .notice{
-      display:none;
-      margin-top:14px;
-      padding:12px;
-      border-radius:11px;
-    }
-
-    .notice.show{display:block}
-    .notice.ok{background:var(--green-soft);color:#125d29}
-    .notice.error{background:var(--red-soft);color:#8b2020}
-
-    .bottom-nav{
-      position:fixed;
-      left:50%;
-      bottom:0;
-      transform:translateX(-50%);
-      width:min(820px,100%);
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      background:#fff;
-      border-top:1px solid var(--border);
-      box-shadow:0 -4px 18px rgba(0,0,0,.08);
-      z-index:30;
-    }
-
-    .nav-item{
-      border:0;
-      background:#fff;
-      padding:11px 6px 12px;
-      color:#647069;
-      font-size:13px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .nav-item span{
-      display:block;
-      font-size:23px;
-      margin-bottom:4px;
-    }
-
-    .nav-item.active{
-      color:#0b752d;
-    }
-
-    .drawer-backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.45);
-      z-index:90;
-    }
-
-    .drawer{
-      position:fixed;
-      top:0;
-      right:0;
-      bottom:0;
-      width:min(380px,86vw);
-      background:#fff;
-      z-index:100;
-      box-shadow:-12px 0 30px rgba(0,0,0,.2);
-      padding:18px;
-      overflow:auto;
-    }
-
-    .drawer-head{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:10px 0 20px;
-      border-bottom:1px solid var(--border);
-    }
-
-    .drawer-head img{
-      width:60px;
-      height:60px;
-      border-radius:15px;
-    }
-
-    .drawer-head h2{
-      margin:0;
-      color:#0c712b;
-    }
-
-    .drawer-menu{
-      display:grid;
-      gap:8px;
-      margin-top:18px;
-    }
-
-    .drawer-item{
-      width:100%;
-      border:0;
-      background:#fff;
-      border-radius:12px;
-      padding:14px;
-      text-align:left;
-      color:var(--text);
-      cursor:pointer;
-      font-size:16px;
-    }
-
-    .drawer-item:hover{
-      background:#eff8f1;
     }
 
     .dialog{
       position:fixed;
       inset:0;
-      z-index:999;
+      z-index:9999;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
-      background:rgba(0,0,0,.56);
+      background:rgba(0,0,0,.58);
     }
 
     .dialog-card{
@@ -460,48 +253,17 @@
       background:#fff;
       border-radius:18px;
       padding:20px;
-      box-shadow:0 18px 50px rgba(0,0,0,.28);
-    }
-
-    .dialog-card h2{
-      margin:0 0 8px;
-      color:#0d6e29;
-    }
-
-    .dialog-card p{
-      color:var(--muted);
-    }
-
-    .dialog-card label{
-      display:block;
-      margin:14px 0 7px;
-      font-weight:700;
-    }
-
-    .dialog-card input,
-    .dialog-card select{
-      width:100%;
-      padding:13px;
-      border:1px solid #b9c7bc;
-      border-radius:11px;
+      box-shadow:0 14px 45px rgba(0,0,0,.28);
     }
 
     .dialog-actions{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:10px;
-      margin-top:14px;
     }
 
-    .secondary-button{
-      width:100%;
-      padding:13px;
-      border:1px solid #bfd3c4;
-      border-radius:11px;
-      background:#eef5f0;
-      color:#145e2a;
-      font-weight:700;
-      cursor:pointer;
+    .dialog-actions button{
+      margin-top:12px;
     }
 
     .install-card{
@@ -516,164 +278,101 @@
     }
 
     .install-row img{
-      width:64px;
-      height:64px;
-      border-radius:15px;
+      width:58px;
+      height:58px;
+      border-radius:14px;
     }
 
-    .hidden{display:none !important}
+    .hidden{
+      display:none !important;
+    }
 
-    @media (max-width:520px){
-      .brand-copy h1{font-size:27px}
-      .brand-copy p{font-size:15px}
-      .brand-icon{width:64px;height:64px;flex-basis:64px}
-      .quick-grid{grid-template-columns:1fr}
-      .reservation{align-items:flex-start}
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      padding:0 0 18px;
     }
   </style>
 </head>
 
 <body>
-<div class="app-shell">
-
-  <header class="topbar">
-    <div class="topbar-inner">
-      <img src="icon-192.png" alt="Forsthänger" class="brand-icon">
-      <div class="brand-copy">
-        <h1>Forsthänger</h1>
-        <p>Reservierung &amp; Status</p>
-      </div>
-      <button id="menuButton" class="menu-button" type="button" aria-label="Menü öffnen">☰</button>
-    </div>
-  </header>
-
-  <main>
-
-    <section id="installCard" class="card install-card">
-      <div class="install-row">
-        <img src="icon-192.png" alt="App-Symbol">
-        <div>
-          <h2 style="margin:0 0 5px;color:#0d6e29">Als App installieren</h2>
-          <div id="installText" class="small"></div>
-        </div>
-      </div>
-      <button id="installButton" class="primary-button hidden" type="button">App installieren</button>
-      <button id="hideInstallButton" class="secondary-button" type="button" style="margin-top:10px">Hinweis ausblenden</button>
-    </section>
-
-    <section id="startSection" class="card">
-      <div class="section-head">
-        <h2>Status</h2>
-        <button id="refreshStatus" class="text-button" type="button">↻ Aktualisieren</button>
-      </div>
-
-      <div class="status-box">
-        <div id="statusIcon" class="status-icon">?</div>
-        <div>
-          <div id="statusTitle" class="status-title">Status wird geladen …</div>
-          <div id="statusInfo" class="status-meta"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-head">
-        <h2>📅 Nächste Reservierungen</h2>
-        <button id="refreshReservations" class="text-button" type="button">↻</button>
-      </div>
-      <div id="reservations" class="loading">Reservierungen werden geladen …</div>
-    </section>
-
-    <section class="quick-grid">
-      <button id="openBookingButton" class="quick-button" type="button">
-        <span>📅</span>
-        Reservierung anfragen
-      </button>
-      <button id="showReservationsButton" class="quick-button" type="button">
-        <span>☷</span>
-        Reservierungen anzeigen
-      </button>
-      <button id="openLinksButton" class="quick-button" type="button">
-        <span>▦</span>
-        Persönlicher Link &amp; QR-Code
-      </button>
-      <button id="copyWhatsAppButton" class="quick-button" type="button">
-        <span>◉</span>
-        WhatsApp-Nachricht
-      </button>
-    </section>
-
-    <section class="card member-card">
-      <div class="member-info">
-        <div class="member-symbol">👤</div>
-        <div>
-          <div class="small">Mitglied</div>
-          <div id="memberName" class="member-name">Noch kein Mitglied ausgewählt</div>
-        </div>
-      </div>
-      <button id="changeMemberButton" class="member-change" type="button">Ändern</button>
-    </section>
-
-    <section id="bookingSection" class="card booking-form">
-      <div class="section-head">
-        <h2>Reservierung eintragen</h2>
-      </div>
-
-      <label for="bookingDate">Datum</label>
-      <input id="bookingDate" type="date">
-
-      <label for="bookingPeriod">Zeitraum</label>
-      <select id="bookingPeriod">
-        <option value="Ganztags">Ganztags</option>
-        <option value="Vormittag">Vormittag</option>
-        <option value="Nachmittag">Nachmittag</option>
-      </select>
-
-      <button id="bookingButton" class="primary-button" type="button">Buchung eintragen</button>
-      <div id="bookingNotice" class="notice" role="status"></div>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav">
-    <button class="nav-item active" type="button" data-target="startSection">
-      <span>⌂</span>Start
-    </button>
-    <button class="nav-item" type="button" data-target="bookingSection">
-      <span>📅</span>Reservieren
-    </button>
-    <button class="nav-item" type="button" id="infoButton">
-      <span>ⓘ</span>Info
-    </button>
-  </nav>
-
-</div>
-
-<div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
-<aside id="drawer" class="drawer hidden">
-  <div class="drawer-head">
-    <img src="icon-192.png" alt="Forsthänger">
+<header>
+  <div class="header-inner">
+    <img src="icon-192.png" class="header-logo" alt="Forsthänger">
     <div>
-      <h2>Forsthänger</h2>
-      <div class="small">Reservierung &amp; Status</div>
+      <h1>Forsthänger</h1>
+      <p>Reservierung &amp; Status</p>
     </div>
   </div>
+</header>
 
-  <div class="drawer-menu">
-    <button class="drawer-item" type="button" data-target="startSection">⌂ Start</button>
-    <button class="drawer-item" type="button" data-target="bookingSection">📅 Reservierung anfragen</button>
-    <button class="drawer-item" type="button" id="drawerReservations">☷ Reservierungen</button>
-    <button class="drawer-item" type="button" id="drawerLinks">▦ Persönlicher Link &amp; QR-Code</button>
-    <button class="drawer-item" type="button" id="drawerWhatsApp">◉ WhatsApp-Nachricht</button>
-    <button class="drawer-item" type="button" id="drawerMember">👤 Mitglied ändern</button>
-    <button class="drawer-item" type="button" id="drawerInfo">ⓘ Info / Anleitung</button>
-  </div>
-</aside>
+<main>
+
+  <section id="installCard" class="card install-card">
+    <div class="install-row">
+      <img src="icon-192.png" alt="App-Symbol">
+      <div>
+        <h2 style="margin-bottom:4px;">Als App installieren</h2>
+        <div id="installText" class="small"></div>
+      </div>
+    </div>
+    <button id="installButton" type="button" class="hidden">App installieren</button>
+    <button id="hideInstallButton" type="button" class="secondary">Hinweis ausblenden</button>
+  </section>
+
+  <section class="card">
+    <h2>Aktueller Status</h2>
+    <div class="status-row">
+      <span id="statusDot" class="dot"></span>
+      <div>
+        <div id="statusTitle" class="status-title">Status wird geladen …</div>
+        <div id="statusInfo" class="small"></div>
+      </div>
+    </div>
+    <button id="refreshStatus" type="button" class="secondary">Status aktualisieren</button>
+  </section>
+
+  <section class="card">
+    <h2>Reservierung eintragen</h2>
+
+    <label>Mitglied</label>
+    <div id="memberName" class="member-fixed">Noch kein Mitglied ausgewählt</div>
+
+    <div class="member-change">
+      <button id="changeMemberButton" type="button">Mitglied ändern</button>
+    </div>
+
+    <label for="bookingDate">Datum</label>
+    <input id="bookingDate" type="date">
+
+    <label for="bookingPeriod">Zeitraum</label>
+    <select id="bookingPeriod">
+      <option value="Ganztags">Ganztags</option>
+      <option value="Vormittag">Vormittag</option>
+      <option value="Nachmittag">Nachmittag</option>
+    </select>
+
+    <button id="bookingButton" type="button">Buchung eintragen</button>
+    <div id="bookingNotice" class="notice" role="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>Kommende Reservierungen</h2>
+    <div id="reservations" class="loading">Reservierungen werden geladen …</div>
+    <button id="refreshReservations" type="button" class="secondary">
+      Reservierungen aktualisieren
+    </button>
+  </section>
+
+  <div class="footer">Forsthänger – einfache Ansicht</div>
+
+</main>
 
 <div id="memberDialog" class="dialog hidden" role="dialog" aria-modal="true">
   <div class="dialog-card">
     <h2>Mitglied auswählen</h2>
-    <p>Der Name wird auf diesem Gerät gespeichert.</p>
+    <p class="small">Der Name wird auf diesem Gerät gespeichert.</p>
 
     <label for="memberSearch">Mitglied suchen</label>
     <input id="memberSearch" type="search" placeholder="Nachname oder Vorname">
@@ -684,8 +383,8 @@
     </select>
 
     <div class="dialog-actions">
-      <button id="saveMemberButton" class="primary-button" type="button">Speichern</button>
-      <button id="cancelMemberButton" class="secondary-button" type="button">Abbrechen</button>
+      <button id="saveMemberButton" type="button">Speichern</button>
+      <button id="cancelMemberButton" type="button" class="secondary">Abbrechen</button>
     </div>
 
     <div id="memberDialogNotice" class="notice" role="status"></div>
@@ -787,22 +486,6 @@
     });
   }
 
-  function scrollToSection(id){
-    var target=byId(id);
-    if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
-    closeDrawer();
-  }
-
-  function openDrawer(){
-    byId("drawer").classList.remove("hidden");
-    byId("drawerBackdrop").classList.remove("hidden");
-  }
-
-  function closeDrawer(){
-    byId("drawer").classList.add("hidden");
-    byId("drawerBackdrop").classList.add("hidden");
-  }
-
   function fillMemberSelect(members){
     var select=byId("memberSelect");
     select.innerHTML='<option value="">Mitglied auswählen …</option>';
@@ -840,7 +523,6 @@
   }
 
   function openMemberDialog(){
-    closeDrawer();
     byId("memberDialog").classList.remove("hidden");
     byId("memberSearch").value="";
     loadMembers();
@@ -869,8 +551,7 @@
   function loadStatus(){
     byId("statusTitle").textContent="Status wird geladen …";
     byId("statusInfo").textContent="";
-    byId("statusIcon").className="status-icon";
-    byId("statusIcon").textContent="?";
+    byId("statusDot").className="dot";
 
     jsonp("status",{}).then(function(payload){
       if(!payload||payload.ok===false){
@@ -878,22 +559,17 @@
       }
 
       var status=payload.status||{};
-      var icon=byId("statusIcon");
 
       if(!status.bekannt){
-        icon.className="status-icon";
-        icon.textContent="?";
         byId("statusTitle").textContent=status.text||"Status noch nicht von ioBroker empfangen";
         return;
       }
 
-      icon.className="status-icon "+(status.da?"green":"red");
-      icon.textContent=status.da?"✓":"×";
+      byId("statusDot").className="dot "+(status.da?"green":"red");
       byId("statusTitle").textContent=status.text;
       byId("statusInfo").textContent=status.zeit?"Letztes ioBroker-Update: "+status.zeit:"";
     }).catch(function(error){
-      byId("statusIcon").className="status-icon";
-      byId("statusIcon").textContent="!";
+      byId("statusDot").className="dot";
       byId("statusTitle").textContent="Status nicht erreichbar";
       byId("statusInfo").textContent=error.message;
     });
@@ -910,33 +586,26 @@
       }
 
       var items=payload.reservations||[];
-      container.className="reservation-list";
+      container.className="";
       container.innerHTML="";
 
       if(!items.length){
-        container.className="";
         container.textContent="In diesem Zeitraum gibt es keine Reservierungen.";
         return;
       }
 
       items.forEach(function(item){
         var row=document.createElement("div");
-        var left=document.createElement("div");
         var title=document.createElement("strong");
         var meta=document.createElement("div");
-        var badge=document.createElement("div");
 
         row.className="reservation";
         title.textContent=item.title||"Unbenannte Reservierung";
         meta.className="reservation-meta";
         meta.textContent=item.display||"";
-        badge.className="badge";
-        badge.textContent="Reserviert";
 
-        left.appendChild(title);
-        left.appendChild(meta);
-        row.appendChild(left);
-        row.appendChild(badge);
+        row.appendChild(title);
+        row.appendChild(meta);
         container.appendChild(row);
       });
     }).catch(function(error){
@@ -983,38 +652,6 @@
     });
   }
 
-  function copyWhatsAppText(){
-    if(!MEMBER){
-      openMemberDialog();
-      return;
-    }
-
-    var url=window.location.origin+window.location.pathname+"?mitglied="+encodeURIComponent(MEMBER);
-    var text="Hallo "+MEMBER+",\n\nhier ist dein persönlicher Link zur Forsthänger-App:\n"+url+
-      "\n\nDu kannst die App über den Browser auf deinem Startbildschirm speichern.";
-
-    navigator.clipboard.writeText(text).then(function(){
-      window.alert("WhatsApp-Text wurde kopiert.");
-    }).catch(function(){
-      window.prompt("Text kopieren:",text);
-    });
-  }
-
-  function openLinks(){
-    window.open("links.html","_blank");
-  }
-
-  function showInfo(){
-    closeDrawer();
-    window.alert(
-      "Forsthänger Version 6\n\n"+
-      "• Status wird aus ioBroker geladen\n"+
-      "• Reservierungen kommen aus Google Kalender\n"+
-      "• Mitglied wird auf diesem Gerät gespeichert\n"+
-      "• Die App kann auf dem Startbildschirm installiert werden"
-    );
-  }
-
   function setupInstall(){
     var card=byId("installCard");
     var text=byId("installText");
@@ -1052,8 +689,9 @@
     });
   }
 
-  byId("menuButton").addEventListener("click",openDrawer);
-  byId("drawerBackdrop").addEventListener("click",closeDrawer);
+  byId("refreshStatus").addEventListener("click",loadStatus);
+  byId("refreshReservations").addEventListener("click",loadReservations);
+  byId("bookingButton").addEventListener("click",submitBooking);
   byId("changeMemberButton").addEventListener("click",openMemberDialog);
   byId("saveMemberButton").addEventListener("click",saveSelectedMember);
   byId("cancelMemberButton").addEventListener("click",function(){
@@ -1066,27 +704,6 @@
       return name.toLowerCase().indexOf(query)!==-1;
     });
     fillMemberSelect(filtered);
-  });
-
-  byId("refreshStatus").addEventListener("click",loadStatus);
-  byId("refreshReservations").addEventListener("click",loadReservations);
-  byId("bookingButton").addEventListener("click",submitBooking);
-  byId("openBookingButton").addEventListener("click",function(){scrollToSection("bookingSection");});
-  byId("showReservationsButton").addEventListener("click",function(){scrollToSection("startSection");loadReservations();});
-  byId("openLinksButton").addEventListener("click",openLinks);
-  byId("copyWhatsAppButton").addEventListener("click",copyWhatsAppText);
-  byId("infoButton").addEventListener("click",showInfo);
-
-  byId("drawerReservations").addEventListener("click",function(){closeDrawer();loadReservations();scrollToSection("startSection");});
-  byId("drawerLinks").addEventListener("click",openLinks);
-  byId("drawerWhatsApp").addEventListener("click",copyWhatsAppText);
-  byId("drawerMember").addEventListener("click",openMemberDialog);
-  byId("drawerInfo").addEventListener("click",showInfo);
-
-  Array.prototype.forEach.call(document.querySelectorAll("[data-target]"),function(button){
-    button.addEventListener("click",function(){
-      scrollToSection(button.getAttribute("data-target"));
-    });
   });
 
   var today=new Date();
