@@ -293,6 +293,11 @@
       font-size:12px;
       padding:0 0 18px;
     }
+      .dot.orange{background:#f39a22;box-shadow:0 0 0 7px rgba(243,154,34,.17)}
+    .repair-warning{display:none;margin-top:14px;padding:13px;border-radius:11px;background:#fff2df;color:#7a4700;border:1px solid #f1c57e;font-weight:700}
+    .repair-warning.show{display:block}
+    .repair-button{background:#d97911}
+    textarea{width:100%;min-height:120px;padding:12px;border:1px solid #b8c5ba;border-radius:10px;resize:vertical;font:inherit}
   </style>
 </head>
 
@@ -330,6 +335,9 @@
         <div id="statusInfo" class="small"></div>
       </div>
     </div>
+    <div id="repairWarning" class="repair-warning">
+      🔧 Der Forsthänger ist in Reparatur. Buchungen sind momentan gesperrt.
+    </div>
     <button id="refreshStatus" type="button" class="secondary">Status aktualisieren</button>
   </section>
 
@@ -355,6 +363,9 @@
 
     <button id="bookingButton" type="button">Buchung eintragen</button>
     <div id="bookingNotice" class="notice" role="status"></div>
+    <button id="openRepairButton" type="button" class="repair-button">
+      🔧 Reparatur oder Schaden melden
+    </button>
   </section>
 
   <section class="card">
@@ -391,6 +402,25 @@
   </div>
 </div>
 
+
+<div id="repairDialog" class="dialog hidden" role="dialog" aria-modal="true">
+  <div class="dialog-card">
+    <h2>Reparatur oder Schaden melden</h2>
+    <p class="small">Bitte kurz beschreiben, was aufgefallen ist.</p>
+
+    <label for="repairMessage">Hinweis</label>
+    <textarea id="repairMessage" maxlength="1000"
+      placeholder="Zum Beispiel: Linkes Rücklicht funktioniert nicht."></textarea>
+
+    <div class="dialog-actions">
+      <button id="sendRepairButton" type="button">Meldung senden</button>
+      <button id="cancelRepairButton" type="button" class="secondary">Abbrechen</button>
+    </div>
+
+    <div id="repairNotice" class="notice" role="status"></div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script>
 (function(){
@@ -403,6 +433,7 @@
   var allMembers=[];
   var jsonpCounter=0;
   var installPrompt=null;
+  var REPAIR_ACTIVE=false;
 
   function byId(id){return document.getElementById(id);}
 
@@ -575,6 +606,87 @@
     });
   }
 
+
+  function loadRepairStatus(){
+    return jsonp("repair-status",{}).then(function(payload){
+      if(!payload||payload.ok===false){
+        throw new Error(payload&&payload.message?payload.message:"Reparaturstatus konnte nicht geladen werden.");
+      }
+
+      var repair=payload.repair||{};
+      REPAIR_ACTIVE=repair.aktiv===true;
+      byId("repairWarning").className=REPAIR_ACTIVE
+        ? "repair-warning show"
+        : "repair-warning";
+      byId("bookingButton").disabled=REPAIR_ACTIVE;
+
+      if(REPAIR_ACTIVE){
+        byId("bookingButton").textContent="Buchung wegen Reparatur gesperrt";
+        byId("statusDot").className="dot orange";
+        byId("statusTitle").textContent="Forsthänger ist in Reparatur";
+        byId("statusInfo").textContent=repair.zeit
+          ? "Reparaturstatus seit: "+repair.zeit
+          : "";
+      }else{
+        byId("bookingButton").textContent="Buchung eintragen";
+      }
+    }).catch(function(error){
+      console.error(error);
+    });
+  }
+
+  function openRepairDialog(){
+    clearNotice(byId("repairNotice"));
+    byId("repairMessage").value="";
+    byId("repairDialog").classList.remove("hidden");
+  }
+
+  function closeRepairDialog(){
+    byId("repairDialog").classList.add("hidden");
+  }
+
+  function sendRepairReport(){
+    var message=byId("repairMessage").value.trim();
+    var button=byId("sendRepairButton");
+    var notice=byId("repairNotice");
+
+    clearNotice(notice);
+
+    if(REPAIR_ACTIVE){
+      showNotice(notice,"Der Forsthänger ist derzeit in Reparatur. Buchungen sind gesperrt.","error");
+      return;
+    }
+
+    if(!MEMBER){
+      showNotice(notice,"Bitte zuerst ein Mitglied auswählen.","error");
+      return;
+    }
+
+    if(message.length<3){
+      showNotice(notice,"Bitte einen aussagekräftigen Hinweis eingeben.","error");
+      return;
+    }
+
+    button.disabled=true;
+    button.textContent="Meldung wird gesendet …";
+
+    jsonp("repair-report",{member:MEMBER,message:message})
+      .then(function(payload){
+        if(!payload||payload.ok===false){
+          throw new Error(payload&&payload.message?payload.message:"Meldung konnte nicht gespeichert werden.");
+        }
+        showNotice(notice,payload.message||"Reparaturhinweis wurde gesendet.","ok");
+        window.setTimeout(closeRepairDialog,1200);
+      })
+      .catch(function(error){
+        showNotice(notice,error.message,"error");
+      })
+      .finally(function(){
+        button.disabled=false;
+        button.textContent="Meldung senden";
+      });
+  }
+
   function loadReservations(){
     var container=byId("reservations");
     container.className="loading";
@@ -692,6 +804,9 @@
   byId("refreshStatus").addEventListener("click",loadStatus);
   byId("refreshReservations").addEventListener("click",loadReservations);
   byId("bookingButton").addEventListener("click",submitBooking);
+  byId("openRepairButton").addEventListener("click",openRepairDialog);
+  byId("sendRepairButton").addEventListener("click",sendRepairReport);
+  byId("cancelRepairButton").addEventListener("click",closeRepairDialog);
   byId("changeMemberButton").addEventListener("click",openMemberDialog);
   byId("saveMemberButton").addEventListener("click",saveSelectedMember);
   byId("cancelMemberButton").addEventListener("click",function(){
@@ -719,11 +834,12 @@
   updateMemberDisplay();
   setupInstall();
   loadStatus();
+  loadRepairStatus();
   loadReservations();
 
   if(!MEMBER)openMemberDialog();
 
-  window.setInterval(loadStatus,60000);
+  window.setInterval(function(){loadStatus();loadRepairStatus();},60000);
 
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(function(){});
