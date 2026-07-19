@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#25693d">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Forsthänger">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -13,225 +12,63 @@
   <title>Forsthänger Gemeinschaft</title>
   <style>
     :root {
-      --green:#1d9b4b;
-      --red:#d43b35;
-      --primary:#25693d;
-      --primary-dark:#194b2b;
-      --bg:#f3f6f3;
-      --card:#fff;
-      --border:#d8e1da;
-      --muted:#667269;
-      --ok-bg:#e8f7ec;
-      --ok:#185c2e;
-      --err-bg:#fdeaea;
-      --err:#8b2020;
-      --shadow:0 5px 18px rgba(0,0,0,.06);
+      --green:#1d9b4b; --red:#d43b35; --primary:#25693d;
+      --primary-dark:#194b2b; --bg:#f3f6f3; --card:#fff;
+      --border:#d8e1da; --muted:#667269;
+      --ok-bg:#e8f7ec; --ok:#185c2e;
+      --err-bg:#fdeaea; --err:#8b2020;
     }
-
     * { box-sizing:border-box; }
-
-    body {
-      margin:0;
-      font-family:Arial,Helvetica,sans-serif;
-      color:#202a23;
-      background:var(--bg);
-    }
-
-    header {
-      background:linear-gradient(135deg,#174c2b,#2d7b49);
-      color:white;
-      padding:26px 18px 22px;
-    }
-
-    header .wrap,
-    main {
-      width:min(780px,100%);
-      margin:auto;
-    }
-
-    h1 {
-      margin:0 0 6px;
-      font-size:28px;
-    }
-
-    header p {
-      margin:0;
-      opacity:.92;
-    }
-
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:#202a23; }
+    header { background:linear-gradient(135deg,#174c2b,#2d7b49); color:#fff; padding:26px 18px 22px; }
+    header .wrap, main { width:min(780px,100%); margin:auto; }
+    h1 { margin:0 0 6px; font-size:28px; }
+    header p { margin:0; opacity:.92; }
     main { padding:18px; }
-
-    .card {
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:18px;
-      margin-bottom:16px;
-      box-shadow:var(--shadow);
-    }
-
-    h2 {
-      margin:0 0 14px;
-      font-size:21px;
-    }
-
-    .status-row {
-      display:flex;
-      align-items:center;
-      gap:14px;
-      padding:16px;
-      background:#eef3ef;
-      border-radius:13px;
-    }
-
-    .dot {
-      width:38px;
-      height:38px;
-      border-radius:50%;
-      background:#999;
-      flex:0 0 38px;
-      box-shadow:0 0 0 7px rgba(0,0,0,.06);
-    }
-
-    .dot.green {
-      background:var(--green);
-      box-shadow:0 0 0 7px rgba(29,155,75,.15);
-    }
-
-    .dot.red {
-      background:var(--red);
-      box-shadow:0 0 0 7px rgba(212,59,53,.15);
-    }
-
-    .status-title {
-      font-size:20px;
-      font-weight:700;
-    }
-
-    .small {
-      margin-top:4px;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    label {
-      display:block;
-      font-weight:700;
-      margin:14px 0 6px;
-    }
-
-    input, select, button {
-      width:100%;
-      font:inherit;
-      border-radius:10px;
-    }
-
-    input, select {
-      padding:12px;
-      border:1px solid #b8c5ba;
-      background:white;
-    }
-
-    button {
-      padding:14px;
-      margin-top:16px;
-      border:0;
-      background:var(--primary);
-      color:white;
-      font-weight:700;
-      cursor:pointer;
-    }
-
+    .card { background:var(--card); border:1px solid var(--border); border-radius:16px;
+      padding:18px; margin-bottom:16px; box-shadow:0 5px 18px rgba(0,0,0,.06); }
+    h2 { margin:0 0 14px; font-size:21px; }
+    .status-row { display:flex; align-items:center; gap:14px; padding:16px;
+      background:#eef3ef; border-radius:13px; }
+    .dot { width:38px; height:38px; border-radius:50%; background:#999;
+      flex:0 0 38px; box-shadow:0 0 0 7px rgba(0,0,0,.06); }
+    .dot.green { background:var(--green); box-shadow:0 0 0 7px rgba(29,155,75,.15); }
+    .dot.red { background:var(--red); box-shadow:0 0 0 7px rgba(212,59,53,.15); }
+    .status-title { font-size:20px; font-weight:700; }
+    .small { margin-top:4px; color:var(--muted); font-size:14px; }
+    label { display:block; font-weight:700; margin:14px 0 6px; }
+    input, select, button { width:100%; font:inherit; border-radius:10px; }
+    input, select { padding:12px; border:1px solid #b8c5ba; background:#fff; }
+    button { padding:14px; margin-top:16px; border:0; background:var(--primary);
+      color:#fff; font-weight:700; cursor:pointer; }
     button:hover { background:var(--primary-dark); }
-
-    button.secondary {
-      background:#edf3ee;
-      color:#205d37;
-      border:1px solid #bfd0c2;
-    }
-
-    button:disabled {
-      opacity:.55;
-      cursor:wait;
-    }
-
-    .member-fixed {
-      padding:14px;
-      border:1px solid #bfd0c2;
-      border-radius:10px;
-      background:#eef6f0;
-      font-size:18px;
-      font-weight:700;
-    }
-
-    .notice {
-      display:none;
-      margin-top:14px;
-      padding:12px;
-      border-radius:10px;
-    }
-
+    button.secondary { background:#edf3ee; color:#205d37; border:1px solid #bfd0c2; }
+    button:disabled { opacity:.55; cursor:wait; }
+    .member-fixed { padding:14px; border:1px solid #bfd0c2; border-radius:10px;
+      background:#eef6f0; font-size:18px; font-weight:700; }
+    .member-change { text-align:center; margin-top:10px; }
+    .member-change button { width:auto; padding:0; margin:0; background:none;
+      color:var(--primary); text-decoration:underline; }
+    .notice { display:none; margin-top:14px; padding:12px; border-radius:10px; }
     .notice.show { display:block; }
     .notice.ok { background:var(--ok-bg); color:var(--ok); }
     .notice.error { background:var(--err-bg); color:var(--err); }
-
-    .reservation {
-      padding:12px 0;
-      border-bottom:1px solid #e4e9e5;
-    }
-
+    .reservation { padding:12px 0; border-bottom:1px solid #e4e9e5; }
     .reservation:last-child { border-bottom:0; }
-
-    .reservation strong {
-      display:block;
-      margin-bottom:4px;
-    }
-
-    .reservation-meta {
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .loading {
-      color:var(--muted);
-      font-style:italic;
-    }
-
-    .install-box {
-      background:#f0f7f2;
-      border:2px solid #bfd9c6;
-    }
-
-    .install-head {
-      display:flex;
-      gap:14px;
-      align-items:center;
-    }
-
-    .app-icon {
-      width:64px;
-      height:64px;
-      border-radius:15px;
-      flex:0 0 64px;
-    }
-
+    .reservation strong { display:block; margin-bottom:4px; }
+    .reservation-meta { color:var(--muted); font-size:14px; }
+    .loading { color:var(--muted); font-style:italic; }
     .hidden { display:none !important; }
-    .member-dialog{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55)}
-    .member-dialog.hidden{display:none}
-    .member-dialog-card{width:min(520px,100%);background:#fff;border-radius:18px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-    .member-dialog-card h2{margin:0 0 8px}
-    .member-dialog-card p{color:var(--muted);line-height:1.5}
-    .member-change{margin-top:10px;text-align:center;font-size:14px}
-    .member-change button{width:auto;margin:0;padding:0;border:0;background:none;color:var(--primary);text-decoration:underline}
-    .member-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-    .member-dialog-actions button{margin-top:0}
-
-    .footer {
-      text-align:center;
-      color:var(--muted);
-      font-size:12px;
-      padding:2px 0 18px;
-    }
+    .dialog { position:fixed; inset:0; z-index:9999; display:flex;
+      align-items:center; justify-content:center; padding:18px; background:rgba(0,0,0,.58); }
+    .dialog-card { width:min(520px,100%); max-height:90vh; overflow:auto;
+      background:#fff; border-radius:18px; padding:20px; box-shadow:0 14px 45px rgba(0,0,0,.28); }
+    .dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .dialog-actions button { margin-top:12px; }
+    .install-box { background:#f0f7f2; border:2px solid #bfd9c6; }
+    .install-head { display:flex; gap:14px; align-items:center; }
+    .app-icon { width:64px; height:64px; border-radius:15px; }
+    .footer { text-align:center; color:var(--muted); font-size:12px; padding-bottom:18px; }
   </style>
 </head>
 <body>
@@ -245,12 +82,10 @@
 <main>
   <section id="installCard" class="card install-box">
     <div class="install-head">
-      <img src="icon-192.png" alt="Forsthänger-App" class="app-icon">
+      <img src="icon-192.png" alt="App-Symbol" class="app-icon">
       <div>
-        <h2 style="margin-bottom:4px;">Als App installieren</h2>
-        <div id="installText" class="small">
-          Die App kann mit eigenem Symbol auf dem Startbildschirm gespeichert werden.
-        </div>
+        <h2 style="margin-bottom:4px">Als App installieren</h2>
+        <div id="installText" class="small"></div>
       </div>
     </div>
     <button id="installButton" type="button" class="hidden">App installieren</button>
@@ -271,9 +106,8 @@
 
   <section class="card">
     <h2>Reservierung eintragen</h2>
-
     <label>Mitglied</label>
-    <div id="memberName" class="member-fixed"></div>
+    <div id="memberName" class="member-fixed">Noch kein Mitglied ausgewählt</div>
     <div class="member-change">
       <button type="button" id="changeMemberButton">Mitglied ändern</button>
     </div>
@@ -300,149 +134,241 @@
     </button>
   </section>
 
-  <div class="footer">Forsthänger Version 5</div>
+  <div class="footer">Forsthänger Version 5.4</div>
 </main>
+
+<div id="memberDialog" class="dialog hidden" role="dialog" aria-modal="true">
+  <div class="dialog-card">
+    <h2>Mitglied auswählen</h2>
+    <p class="small">Der Name wird auf diesem Gerät gespeichert.</p>
+
+    <label for="memberSearch">Mitglied suchen</label>
+    <input id="memberSearch" type="search" placeholder="Nachname oder Vorname">
+
+    <label for="memberSelect">Mitglied</label>
+    <select id="memberSelect">
+      <option value="">Mitglieder werden geladen …</option>
+    </select>
+
+    <div class="dialog-actions">
+      <button type="button" id="saveMemberButton">Speichern</button>
+      <button type="button" class="secondary" id="cancelMemberButton">Abbrechen</button>
+    </div>
+    <div id="memberDialogNotice" class="notice" role="status"></div>
+  </div>
+</div>
 
 <script src="config.js"></script>
 <script>
-  const CFG = window.FORSTHAENGER_CONFIG;
-  const MEMBER_STORAGE_KEY = "forsthaenger-mitglied";
-  const URL_MEMBER = (new URLSearchParams(location.search).get("mitglied") || "").trim();
-  let MEMBER = URL_MEMBER || loadStoredMember();
-  let installPrompt = null;
-  let jsonpCounter = 0;
-  let allMembers = [];
+(function () {
+  "use strict";
 
-  function loadStoredMember(){
-    try{return localStorage.getItem(MEMBER_STORAGE_KEY)||"";}catch(error){return "";}
+  var CFG = window.FORSTHAENGER_CONFIG || {};
+  var STORAGE_KEY = "forsthaenger-mitglied";
+  var URL_MEMBER = (new URLSearchParams(window.location.search).get("mitglied") || "").trim();
+  var MEMBER = URL_MEMBER || readStoredMember();
+  var allMembers = [];
+  var jsonpCounter = 0;
+  var installPrompt = null;
+
+  function byId(id) {
+    return document.getElementById(id);
   }
 
-  function saveStoredMember(name){
-    try{localStorage.setItem(MEMBER_STORAGE_KEY,name);}catch(error){}
+  function readStoredMember() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) || "";
+    } catch (error) {
+      return "";
+    }
   }
 
-  function updateMemberDisplay(){
-    document.getElementById("memberName").textContent = MEMBER || "Noch kein Mitglied ausgewählt";
+  function storeMember(name) {
+    try {
+      localStorage.setItem(STORAGE_KEY, name);
+    } catch (error) {}
   }
-
-  updateMemberDisplay();
-
-  const today = new Date();
-  document.getElementById("bookingDate").min =
-    new Date(today.getTime() - today.getTimezoneOffset() * 60000)
-      .toISOString()
-      .slice(0,10);
 
   function apiUrl() {
     return String(CFG.apiUrl || "").trim();
   }
 
-  function showNotice(text, type) {
-    const el = document.getElementById("bookingNotice");
-    el.textContent = text;
-    el.className = "notice show " + type;
+  function showNotice(element, text, type) {
+    element.textContent = text;
+    element.className = "notice show " + type;
+  }
+
+  function clearNotice(element) {
+    element.textContent = "";
+    element.className = "notice";
+  }
+
+  function updateMemberDisplay() {
+    byId("memberName").textContent = MEMBER || "Noch kein Mitglied ausgewählt";
   }
 
   function jsonp(action, params) {
-    return new Promise((resolve, reject) => {
-      const base = apiUrl();
+    return new Promise(function (resolve, reject) {
+      var base = apiUrl();
 
-      if (!base || base.includes("HIER_")) {
+      if (!base || base.indexOf("HIER_") !== -1) {
         reject(new Error("Google-Web-App-Adresse fehlt in config.js."));
         return;
       }
 
-      const callbackName = "forsthaengerCallback_" + (++jsonpCounter) + "_" + Date.now();
-      const script = document.createElement("script");
-      const separator = base.includes("?") ? "&" : "?";
+      var callbackName = "forsthaengerCallback_" + (++jsonpCounter) + "_" + Date.now();
+      var script = document.createElement("script");
+      var separator = base.indexOf("?") !== -1 ? "&" : "?";
+      var done = false;
+      var query = new URLSearchParams();
 
-      let finished = false;
+      query.set("action", action);
+      query.set("callback", callbackName);
+      query.set("_", String(Date.now()));
+
+      Object.keys(params || {}).forEach(function (key) {
+        query.set(key, String(params[key]));
+      });
 
       function cleanup() {
-        delete window[callbackName];
-        if (script.parentNode) script.remove();
+        try { delete window[callbackName]; } catch (error) {}
+        if (script.parentNode) script.parentNode.removeChild(script);
       }
 
-      window[callbackName] = function(payload) {
-        if (finished) return;
-        finished = true;
+      window[callbackName] = function (payload) {
+        if (done) return;
+        done = true;
         cleanup();
         resolve(payload);
       };
 
-      script.onerror = function() {
-        if (finished) return;
-        finished = true;
+      script.onerror = function () {
+        if (done) return;
+        done = true;
         cleanup();
         reject(new Error("Google-Schnittstelle konnte nicht erreicht werden."));
       };
 
-      const query = new URLSearchParams({
-        action,
-        callback: callbackName,
-        _: Date.now().toString(),
-        ...params
-      });
-
       script.src = base + separator + query.toString();
       document.body.appendChild(script);
 
-      setTimeout(() => {
-        if (finished) return;
-        finished = true;
+      window.setTimeout(function () {
+        if (done) return;
+        done = true;
         cleanup();
         reject(new Error("Keine Antwort von Google erhalten."));
       }, 15000);
     });
   }
 
-  async function loadStatus() {
-    try {
-      const payload = await jsonp("status", {});
+  function fillMemberSelect(members) {
+    var select = byId("memberSelect");
+    select.innerHTML = '<option value="">Mitglied auswählen …</option>';
 
+    members.forEach(function (name) {
+      var option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+
+    if (MEMBER) select.value = MEMBER;
+  }
+
+  function loadMembers() {
+    var notice = byId("memberDialogNotice");
+    clearNotice(notice);
+    byId("memberSelect").innerHTML = '<option value="">Mitglieder werden geladen …</option>';
+
+    return jsonp("members", {}).then(function (payload) {
       if (!payload || payload.ok === false) {
-        throw new Error(payload?.message || "Status konnte nicht geladen werden.");
+        throw new Error(payload && payload.message ?
+          payload.message : "Mitglieder konnten nicht geladen werden.");
       }
 
-      const status = payload.status;
-      const dot = document.getElementById("statusDot");
-      const title = document.getElementById("statusTitle");
-      const info = document.getElementById("statusInfo");
+      allMembers = payload.members || [];
+      fillMemberSelect(allMembers);
 
-      if (!status || !status.bekannt) {
+      if (!allMembers.length) {
+        showNotice(notice, "Keine Mitglieder in der Tabelle gefunden.", "error");
+      }
+    }).catch(function (error) {
+      showNotice(notice, error.message, "error");
+      byId("memberSelect").innerHTML = '<option value="">Laden fehlgeschlagen</option>';
+    });
+  }
+
+  function openMemberDialog() {
+    byId("memberDialog").classList.remove("hidden");
+    byId("memberSearch").value = "";
+    loadMembers();
+  }
+
+  function closeMemberDialog() {
+    byId("memberDialog").classList.add("hidden");
+  }
+
+  function saveSelectedMember() {
+    var selected = byId("memberSelect").value.trim();
+    var notice = byId("memberDialogNotice");
+
+    if (!selected) {
+      showNotice(notice, "Bitte ein Mitglied auswählen.", "error");
+      return;
+    }
+
+    MEMBER = selected;
+    storeMember(MEMBER);
+    updateMemberDisplay();
+    closeMemberDialog();
+    showNotice(byId("bookingNotice"), "Mitglied gespeichert: " + MEMBER, "ok");
+  }
+
+  function loadStatus() {
+    byId("statusTitle").textContent = "Status wird geladen …";
+    byId("statusInfo").textContent = "";
+
+    jsonp("status", {}).then(function (payload) {
+      if (!payload || payload.ok === false) {
+        throw new Error(payload && payload.message ?
+          payload.message : "Status konnte nicht geladen werden.");
+      }
+
+      var status = payload.status || {};
+      var dot = byId("statusDot");
+
+      if (!status.bekannt) {
         dot.className = "dot";
-        title.textContent = status?.text || "Status noch nicht empfangen";
-        info.textContent = "";
+        byId("statusTitle").textContent =
+          status.text || "Status noch nicht von ioBroker empfangen";
         return;
       }
 
       dot.className = "dot " + (status.da ? "green" : "red");
-      title.textContent = status.text;
-      info.textContent = status.zeit
-        ? "Letztes ioBroker-Update: " + status.zeit
-        : "";
-    } catch (error) {
-      document.getElementById("statusDot").className = "dot";
-      document.getElementById("statusTitle").textContent = "Status nicht erreichbar";
-      document.getElementById("statusInfo").textContent = error.message;
-    }
+      byId("statusTitle").textContent = status.text;
+      byId("statusInfo").textContent =
+        status.zeit ? "Letztes ioBroker-Update: " + status.zeit : "";
+    }).catch(function (error) {
+      byId("statusDot").className = "dot";
+      byId("statusTitle").textContent = "Status nicht erreichbar";
+      byId("statusInfo").textContent = error.message;
+    });
   }
 
-  async function loadReservations() {
-    const container = document.getElementById("reservations");
+  function loadReservations() {
+    var container = byId("reservations");
     container.className = "loading";
     container.textContent = "Reservierungen werden geladen …";
 
-    try {
-      const payload = await jsonp("reservations", {
-        days: String(CFG.reservationDays || 60)
-      });
-
+    jsonp("reservations", {
+      days: String(CFG.reservationDays || 60)
+    }).then(function (payload) {
       if (!payload || payload.ok === false) {
-        throw new Error(payload?.message || "Reservierungen konnten nicht geladen werden.");
+        throw new Error(payload && payload.message ?
+          payload.message : "Reservierungen konnten nicht geladen werden.");
       }
 
-      const items = payload.reservations || [];
+      var items = payload.reservations || [];
       container.className = "";
       container.innerHTML = "";
 
@@ -451,217 +377,147 @@
         return;
       }
 
-      items.forEach(item => {
-        const row = document.createElement("div");
+      items.forEach(function (item) {
+        var row = document.createElement("div");
+        var title = document.createElement("strong");
+        var meta = document.createElement("div");
+
         row.className = "reservation";
-
-        const title = document.createElement("strong");
         title.textContent = item.title || "Unbenannte Reservierung";
-
-        const meta = document.createElement("div");
         meta.className = "reservation-meta";
         meta.textContent = item.display || "";
 
-        row.append(title, meta);
+        row.appendChild(title);
+        row.appendChild(meta);
         container.appendChild(row);
       });
-    } catch (error) {
+    }).catch(function (error) {
       container.className = "notice show error";
       container.textContent = error.message;
-    }
-  }
-
-  async function loadMembersForDialog(){
-    const select=document.getElementById("memberDialogSelect");
-    const notice=document.getElementById("memberDialogNotice");
-    select.innerHTML='<option value="">Mitglied auswählen …</option>';
-    notice.className="notice";
-    notice.textContent="";
-
-    try{
-      const payload=await jsonp("members",{});
-      if(!payload||payload.ok===false){
-        throw new Error(payload&&payload.message?payload.message:"Mitglieder konnten nicht geladen werden.");
-      }
-      allMembers=payload.members||[];
-      fillMemberSelect(allMembers);
-      if(MEMBER)select.value=MEMBER;
-    }catch(error){
-      notice.textContent=error.message;
-      notice.className="notice show error";
-    }
-  }
-
-  function fillMemberSelect(members){
-    const select=document.getElementById("memberDialogSelect");
-    select.innerHTML='<option value="">Mitglied auswählen …</option>';
-    members.forEach(name=>{
-      const option=document.createElement("option");
-      option.value=name;
-      option.textContent=name;
-      select.appendChild(option);
     });
   }
 
-  function openMemberDialog(){
-    document.getElementById("memberDialog").classList.remove("hidden");
-    document.getElementById("memberSearch").value="";
-    loadMembersForDialog();
-  }
+  function submitBooking() {
+    var date = byId("bookingDate").value;
+    var period = byId("bookingPeriod").value;
+    var button = byId("bookingButton");
+    var notice = byId("bookingNotice");
 
-  function closeMemberDialog(){
-    document.getElementById("memberDialog").classList.add("hidden");
-  }
-
-  function saveSelectedMember(){
-    const selected=document.getElementById("memberDialogSelect").value.trim();
-    const notice=document.getElementById("memberDialogNotice");
-    if(!selected){
-      notice.textContent="Bitte ein Mitglied auswählen.";
-      notice.className="notice show error";
-      return;
-    }
-    MEMBER=selected;
-    saveStoredMember(MEMBER);
-    updateMemberDisplay();
-    closeMemberDialog();
-    showNotice("Mitglied gespeichert: "+MEMBER,"ok");
-  }
-
-  async function submitBooking() {
-    const date = document.getElementById("bookingDate").value;
-    const period = document.getElementById("bookingPeriod").value;
-    const button = document.getElementById("bookingButton");
+    clearNotice(notice);
 
     if (!MEMBER) {
-      showNotice("Im persönlichen Link fehlt der Mitgliedsname.", "error");
+      showNotice(notice, "Bitte zuerst ein Mitglied auswählen.", "error");
+      openMemberDialog();
       return;
     }
 
     if (!date) {
-      showNotice("Bitte ein Datum auswählen.", "error");
+      showNotice(notice, "Bitte ein Datum auswählen.", "error");
       return;
     }
 
     button.disabled = true;
     button.textContent = "Buchung wird geprüft …";
 
-    try {
-      const payload = await jsonp("book", {
-        member: MEMBER,
-        date,
-        period
-      });
-
+    jsonp("book", {
+      member: MEMBER,
+      date: date,
+      period: period
+    }).then(function (payload) {
       if (!payload || payload.ok === false) {
-        throw new Error(payload?.message || "Buchung konnte nicht eingetragen werden.");
+        throw new Error(payload && payload.message ?
+          payload.message : "Buchung konnte nicht eingetragen werden.");
       }
 
-      showNotice(payload.message || "Buchung erfolgreich eingetragen.", "ok");
-      document.getElementById("bookingDate").value = "";
-      await loadReservations();
-    } catch (error) {
-      showNotice(error.message, "error");
-    } finally {
+      showNotice(notice, payload.message || "Buchung erfolgreich eingetragen.", "ok");
+      byId("bookingDate").value = "";
+      loadReservations();
+    }).catch(function (error) {
+      showNotice(notice, error.message, "error");
+    }).finally(function () {
       button.disabled = false;
       button.textContent = "Buchung eintragen";
-    }
-  }
-
-  function isStandalone() {
-    return window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true;
-  }
-
-  function isIos() {
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    });
   }
 
   function setupInstall() {
-    const card = document.getElementById("installCard");
-    const text = document.getElementById("installText");
-    const installButton = document.getElementById("installButton");
+    var card = byId("installCard");
+    var text = byId("installText");
+    var button = byId("installButton");
+    var standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
-    if (isStandalone()) {
+    if (standalone) {
       card.classList.add("hidden");
       return;
     }
 
-    if (isIos()) {
-      text.innerHTML =
-        'In Safari unten auf <strong>Teilen</strong> tippen und anschließend ' +
-        '<strong>Zum Home-Bildschirm</strong> wählen.';
-    } else {
-      text.innerHTML =
-        'Im Browser-Menü <strong>App installieren</strong> oder ' +
-        '<strong>Zum Startbildschirm hinzufügen</strong> wählen.';
-    }
+    text.innerHTML = ios
+      ? 'In Safari auf <strong>Teilen</strong> und danach <strong>Zum Home-Bildschirm</strong> tippen.'
+      : 'Im Browser-Menü <strong>App installieren</strong> oder <strong>Zum Startbildschirm hinzufügen</strong> wählen.';
 
-    window.addEventListener("beforeinstallprompt", event => {
+    window.addEventListener("beforeinstallprompt", function (event) {
       event.preventDefault();
       installPrompt = event;
-      installButton.classList.remove("hidden");
+      button.classList.remove("hidden");
     });
 
-    installButton.addEventListener("click", async () => {
+    button.addEventListener("click", function () {
       if (!installPrompt) return;
       installPrompt.prompt();
-      await installPrompt.userChoice;
-      installPrompt = null;
-      installButton.classList.add("hidden");
+      installPrompt.userChoice.then(function () {
+        installPrompt = null;
+        button.classList.add("hidden");
+      });
     });
 
-    document.getElementById("hideInstallButton").addEventListener("click", () => {
+    byId("hideInstallButton").addEventListener("click", function () {
       card.classList.add("hidden");
     });
   }
 
-  document.getElementById("bookingButton").addEventListener("click", submitBooking);
-  document.getElementById("refreshStatus").addEventListener("click", loadStatus);
-  document.getElementById("refreshReservations").addEventListener("click", loadReservations);
-  document.getElementById("changeMemberButton").addEventListener("click",openMemberDialog);
-  document.getElementById("saveMemberButton").addEventListener("click",saveSelectedMember);
-  document.getElementById("cancelMemberButton").addEventListener("click",()=>{if(MEMBER)closeMemberDialog();});
-  document.getElementById("memberSearch").addEventListener("input",function(){
-    const query=this.value.trim().toLowerCase();
-    fillMemberSelect(!query?allMembers:allMembers.filter(name=>name.toLowerCase().includes(query)));
+  byId("bookingButton").addEventListener("click", submitBooking);
+  byId("refreshStatus").addEventListener("click", loadStatus);
+  byId("refreshReservations").addEventListener("click", loadReservations);
+  byId("changeMemberButton").addEventListener("click", openMemberDialog);
+  byId("saveMemberButton").addEventListener("click", saveSelectedMember);
+  byId("cancelMemberButton").addEventListener("click", function () {
+    if (MEMBER) closeMemberDialog();
   });
 
-  if(URL_MEMBER){
-    MEMBER=URL_MEMBER;
-    saveStoredMember(MEMBER);
-    updateMemberDisplay();
+  byId("memberSearch").addEventListener("input", function () {
+    var query = this.value.trim().toLowerCase();
+    var filtered = !query ? allMembers : allMembers.filter(function (name) {
+      return name.toLowerCase().indexOf(query) !== -1;
+    });
+    fillMemberSelect(filtered);
+  });
+
+  var today = new Date();
+  byId("bookingDate").min =
+    new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 10);
+
+  if (URL_MEMBER) {
+    MEMBER = URL_MEMBER;
+    storeMember(MEMBER);
   }
 
-  if(!MEMBER){
-    openMemberDialog();
-  }
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
-  }
-
+  updateMemberDisplay();
   setupInstall();
   loadStatus();
   loadReservations();
-  setInterval(loadStatus, 60000);
+
+  if (!MEMBER) openMemberDialog();
+
+  window.setInterval(loadStatus, 60000);
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(function () {});
+  }
+})();
 </script>
-<div id="memberDialog" class="member-dialog hidden" role="dialog" aria-modal="true">
-  <div class="member-dialog-card">
-    <h2>Mitglied auswählen</h2>
-    <p>Bitte einmal deinen Namen auswählen. Die App speichert ihn auf diesem Gerät.</p>
-    <label for="memberSearch">Mitglied suchen</label>
-    <input id="memberSearch" type="search" placeholder="Nachname oder Vorname">
-    <label for="memberDialogSelect">Mitglied</label>
-    <select id="memberDialogSelect">
-      <option value="">Mitglied auswählen …</option>
-    </select>
-    <div class="member-dialog-actions">
-      <button type="button" id="saveMemberButton">Speichern</button>
-      <button type="button" class="secondary" id="cancelMemberButton">Abbrechen</button>
-    </div>
-    <div id="memberDialogNotice" class="notice" role="status"></div>
-  </div>
-</div>
 </body>
 </html>
