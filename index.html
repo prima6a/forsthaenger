@@ -359,7 +359,7 @@
       </div>
     </div>
     <div id="repairWarning" class="repair-warning">
-      🔧 Der Forsthänger ist in Reparatur. Buchungen sind momentan gesperrt.
+      🔧 Der Forsthänger ist in Reparatur. Buchungen sind gesperrt, weitere Schäden können aber gemeldet werden.
     </div>
     <button id="refreshStatus" type="button" class="secondary">Status aktualisieren</button>
   </section>
@@ -388,7 +388,7 @@
     <button id="bookingButton" type="button">Buchung eintragen</button>
     <div id="bookingNotice" class="notice" role="status"></div>
     <div class="repair-explanation">
-      Ist etwas kaputt oder auffällig? Dann hier kurz Bescheid geben.
+      Ist etwas kaputt oder auffällig? Eine Meldung ist jederzeit möglich – auch während einer Reparatur.
     </div>
     <button id="openRepairButton" type="button" class="repair-button">
       🔧 Schaden oder Problem melden
@@ -416,7 +416,7 @@
     <button id="hideInstallButton" type="button" class="secondary">Hinweis ausblenden</button>
   </section>
 
-  <div class="footer">Forsthänger – einfache Ansicht 7.1</div>
+  <div class="footer">Forsthänger – einfache Ansicht 7.7</div>
 
 </main>
 
@@ -446,7 +446,9 @@
 <div id="repairDialog" class="dialog hidden" role="dialog" aria-modal="true">
   <div class="dialog-card">
     <h2>Schaden oder Problem melden</h2>
-    <p class="small">Bitte kurz und verständlich beschreiben, was kaputt ist oder nicht richtig funktioniert.</p>
+    <p id="repairDialogHelp" class="small">
+      Bitte kurz und verständlich beschreiben, was kaputt ist oder nicht richtig funktioniert.
+    </p>
 
     <label for="repairMessage">Hinweis</label>
     <textarea id="repairMessage" maxlength="1000"
@@ -678,6 +680,11 @@
   function openRepairDialog(){
     clearNotice(byId("repairNotice"));
     byId("repairMessage").value="";
+
+    byId("repairDialogHelp").textContent = REPAIR_ACTIVE
+      ? "Der Forsthänger ist bereits in Reparatur. Weitere Schäden oder Hinweise können trotzdem gemeldet werden."
+      : "Bitte kurz und verständlich beschreiben, was kaputt ist oder nicht richtig funktioniert.";
+
     byId("repairDialog").classList.remove("hidden");
   }
 
@@ -693,7 +700,11 @@
     clearNotice(notice);
 
     if(REPAIR_ACTIVE){
-      showNotice(notice,"Der Forsthänger ist derzeit in Reparatur. Buchungen sind gesperrt.","error");
+      showNotice(
+        notice,
+        "Der Forsthänger ist derzeit in Reparatur. Neue Buchungen sind momentan nicht möglich.",
+        "error"
+      );
       return;
     }
 

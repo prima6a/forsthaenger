@@ -1,4 +1,4 @@
-const CACHE = "forsthaenger-v7-1-einfach";
+const CACHE = "forsthaenger-v7-7";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
